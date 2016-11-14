@@ -1,12 +1,11 @@
 *,
 *::before,
-*::after {
+*::after
   box-sizing: border-box;
-}
 *::before,
-*::after {
+*::after
   pointer-events: none;
-}
+  
 html,
 body,
 div,
@@ -79,6 +78,7 @@ video {
   vertical-align: baseline;
   border: 0;
 }
+
 article,
 aside,
 details,
@@ -93,6 +93,7 @@ section,
 main {
   display: block;
 }
+
 address,
 caption,
 cite,
@@ -104,84 +105,53 @@ th,
 var {
   font-style: normal;
 }
+
 table {
   border-spacing: 0;
   border-collapse: collapse;
 }
+
 caption,
 th,
 td {
   text-align: left;
 }
+
 q:before,
 q:after {
   content: '';
 }
+
 object,
 embed {
   vertical-align: top;
 }
+
 img,
 abbr,
 acronym,
 fieldset {
   border: 0;
 }
+
 li {
   list-style-type: none;
 }
+
 a,
 label {
   cursor: pointer;
 }
-a:active,
-a:focus {
-  outline: none;
+
+a {
+  &:active,
+  &:focus {
+    outline: none;
+  }
 }
+
 button::-moz-focus-inner,
 input::-moz-focus-inner {
   padding: 0;
   border: 0;
-}
-body {
-  font-size: 16px;
-  background-color: #fff;
-  color: #2c3e50;
-}
-#todo {
-  width: 80%;
-  max-width: 900px;
-  margin: auto;
-}
-.project--lists,
-.task--lists {
-  border-radius: 7px;
-  overflow: hidden;
-  border: 1px solid #e4e9eb;
-}
-.project--list,
-.task--list {
-  display: flex;
-  align-items: center;
-  padding: 1rem 2rem;
-  background-color: #fff;
-  border-top: 1px solid #bcc8cd;
-}
-.project--list:first-child,
-.task--list:first-child {
-  border-top: none;
-}
-.project--list.even,
-.task--list.even {
-  border-top: 1px solid #c9d3d7;
-  background-color: #fcfcfc;
-}
-.project--list--done-toggle,
-.task--list--done-toggle {
-  cursor: pointer;
-  font-size: 2rem;
-  margin-right: 20px;
-}
-.task--list--date {
-  font-size: 0.8rem;
 }

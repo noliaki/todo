@@ -1,4 +1,52 @@
-*,
-*::before,
-*::after
-  box-sizing: border-box;
+@import "_reset"
+
+size-content = 900px;
+
+color-gray = #ECF0F1;
+color-white = #fff;
+color-base = #2C3E50;
+color-blue = #3498DB;
+color-accent = #E74C3C;
+color-border = darken(color-gray, 3%);
+
+border-radius = 7px
+
+body
+  font-size: 16px;
+  background-color: color-white
+  color: color-base
+
+#todo
+  width: 80%;
+  max-width: size-content;
+  margin: auto;
+
+.project--lists
+.task--lists
+  border-radius: border-radius;
+  overflow: hidden;
+  border: 1px solid color-border
+
+.project--list
+.task--list
+  display: flex;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: color-white;
+  border-top: 1px solid darken(color-border, 15%)
+
+  &:first-child
+    border-top: none;
+
+  &.even
+    border-top: 1px solid darken(color-border, 10%)
+    background-color: darken(color-white, 1%)
+
+.project--list--done-toggle
+.task--list--done-toggle
+  cursor: pointer;
+  font-size: 2rem;
+  margin-right: 20px;
+
+.task--list--date
+  font-size: 0.8rem;

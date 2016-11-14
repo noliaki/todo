@@ -1,9 +1,11 @@
 {
   "scripts": {
-    "build:dev": "webpack --config ./webpack.config.dev.js",
+    "clean": "rm -rf dist/ && mkdir dist",
+    "build:dev": "yarn run clean && yarn run pug & webpack --config ./webpack.config.dev.js & yarn run stylus:dev & yarn run browser-sync",
     "build": "webpack",
-    "pug": "pug -h",
-    "stylus:dev": "stylus -w ./src/css/style.styl -o ./dist/css/style.css"
+    "pug": "pug -w src/index.pug -o dist",
+    "browser-sync": "browser-sync start --config bs-config.js",
+    "stylus:dev": "mkdir ./dist/css && stylus -w ./src/css/style.styl -o ./dist/css"
   },
   "dependencies": {
     "babel-core": "^6.17.0",
@@ -11,6 +13,7 @@
     "babel-preset-es2015": "^6.16.0",
     "babel-preset-react": "^6.16.0",
     "babel-preset-react-hmre": "^1.1.1",
+    "browser-sync": "^2.17.6",
     "pug": "^2.0.0-beta6",
     "pug-cli": "^1.0.0-alpha6",
     "react": "^15.3.2",

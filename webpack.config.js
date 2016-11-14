@@ -22,10 +22,12 @@ module.exports = {
   },
   plugins: [
     new webpack.ProvidePlugin({
-      // Automtically detect jQuery and $ as free var in modules
-      // and inject the jquery library
-      // This is required by many jquery plugins
       React: "react"
+    }),
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify('production')
+      }
     }),
     new webpack.optimize.UglifyJsPlugin({
       compress: { warnings: false }
