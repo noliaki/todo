@@ -1,11 +1,16 @@
 {
   "scripts": {
-    "clean": "rm -rf dist/ && mkdir dist",
-    "build:dev": "yarn run clean && yarn run pug & webpack --config ./webpack.config.dev.js & yarn run stylus:dev & yarn run browser-sync",
-    "build": "webpack",
-    "pug": "pug -w src/index.pug -o dist",
+    "clean": "rm -rf dist",
+    "mkdir:dist": "mkdir ./dist && mkdir ./dist/css",
+    "build:dev": "run-s clean mkdir:dist watch",
+    "build": "run-s clean pug stylus webpack",
+    "watch": "run-p watch:* browser-sync",
+    "watch:pug": "pug -w src/index.pug -o dist",
+    "watch:stylus": "stylus -w ./src/css/style.styl -o ./dist/css",
+    "watch:webpack": "webpack --config ./webpack.config.dev.js",
+    "pug": "pug src/index.pug -o dist",
     "browser-sync": "browser-sync start --config bs-config.js",
-    "stylus:dev": "mkdir ./dist/css && stylus -w ./src/css/style.styl -o ./dist/css"
+    "stylus": "stylus ./src/css/style.styl -o ./dist/css"
   },
   "dependencies": {
     "babel-core": "^6.17.0",
@@ -14,6 +19,7 @@
     "babel-preset-react": "^6.16.0",
     "babel-preset-react-hmre": "^1.1.1",
     "browser-sync": "^2.17.6",
+    "npm-run-all": "^3.1.1",
     "pug": "^2.0.0-beta6",
     "pug-cli": "^1.0.0-alpha6",
     "react": "^15.3.2",

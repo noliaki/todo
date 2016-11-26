@@ -23,6 +23,7 @@ body
 
 .project--lists
 .task--lists
+  min-height: 3em;
   border-radius: border-radius;
   overflow: hidden;
   border: 1px solid color-border
@@ -45,8 +46,11 @@ body
 .project--list--done-toggle
 .task--list--done-toggle
   cursor: pointer;
-  font-size: 2rem;
   margin-right: 20px;
+  width: 25px;
+  height: 25px;
+  // background-color: darken(color-border, 10%)
+  border: 1px solid color-border
 
 .task--list--date
   font-size: 0.8rem;

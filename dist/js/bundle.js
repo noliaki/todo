@@ -60,11 +60,11 @@
 	
 	var _project2 = _interopRequireDefault(_project);
 	
-	var _task = __webpack_require__(175);
+	var _task = __webpack_require__(174);
 	
 	var _task2 = _interopRequireDefault(_task);
 	
-	var _initialState = __webpack_require__(174);
+	var _initialState = __webpack_require__(175);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -73,6 +73,8 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var storageName = 'todo';
 	
 	var TodoApp = function (_React$Component) {
 	  _inherits(TodoApp, _React$Component);
@@ -93,6 +95,31 @@
 	  }
 	
 	  _createClass(TodoApp, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var tasks = JSON.parse(window.localStorage.getItem(storageName));
+	      console.log(tasks);
+	      if (!tasks.length) {
+	        return;
+	      }
+	      console.log('run');
+	      tasks.forEach(function (task) {
+	        task.createDate = new Date(Date.parse(task.createDate));
+	        task.editDate = new Date(Date.parse(task.editDate));
+	        task.deleteDate = task.deleteDate ? new Date(Date.parse(task.deleteDate)) : null;
+	      });
+	      this.setState({
+	        tasks: tasks
+	      });
+	    }
+	  }, {
+	    key: 'addNewTask',
+	    value: function addNewTask(newTask) {
+	      this.state.tasks.push(newTask);
+	      console.log(this.state.tasks);
+	      window.localStorage.setItem(storageName, JSON.stringify(this.state.tasks));
+	    }
+	  }, {
 	    key: 'onInput',
 	    value: function onInput(event) {
 	      event.preventDefault();
@@ -108,10 +135,18 @@
 	      return _react2.default.createElement(
 	        'div',
 	        null,
-	        _react2.default.createElement('input', { type: 'input', onInput: function onInput(event) {
+	        _react2.default.createElement('input', { type: 'input',
+	          onInput: function onInput(event) {
 	            return _this2.onInput(event);
-	          }, value: this.state.searchText }),
-	        _react2.default.createElement(_task2.default, { tasks: this.state.tasks, searchText: this.state.searchText })
+	          },
+	          value: this.state.searchText
+	        }),
+	        _react2.default.createElement(_task2.default, { tasks: this.state.tasks,
+	          searchText: this.state.searchText,
+	          addNewTask: function addNewTask(newTask) {
+	            return _this2.addNewTask(newTask);
+	          }
+	        })
 	      );
 	    }
 	  }]);
@@ -21599,53 +21634,6 @@
 
 /***/ },
 /* 174 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var projects = exports.projects = function () {
-	  var arr = [];
-	  for (var i = 0, len = 100; i < len; i++) {
-	    var date = new Date();
-	    arr.push({
-	      id: arr.length,
-	      name: 'Project-' + arr.length,
-	      description: 'fuga-' + arr.length,
-	      createDate: date,
-	      editDate: date,
-	      deleteDate: null,
-	      done: false,
-	      tasks: []
-	    });
-	  }
-	
-	  return arr;
-	}();
-	
-	var tasks = exports.tasks = function () {
-	  var arr = [];
-	  for (var i = 0, len = 100; i < len; i++) {
-	    var date = new Date();
-	    arr.push({
-	      id: arr.length,
-	      name: 'TASK-' + arr.length,
-	      description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-	      createDate: date,
-	      editDate: date,
-	      deleteDate: null,
-	      done: false,
-	      project: null
-	    });
-	  }
-	
-	  return arr;
-	}();
-
-/***/ },
-/* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -21680,10 +21668,60 @@
 	  function Task(props) {
 	    _classCallCheck(this, Task);
 	
-	    return _possibleConstructorReturn(this, (Task.__proto__ || Object.getPrototypeOf(Task)).call(this, props));
+	    var _this = _possibleConstructorReturn(this, (Task.__proto__ || Object.getPrototypeOf(Task)).call(this, props));
+	
+	    _this.state = {
+	      newTask: null
+	    };
+	    return _this;
 	  }
 	
 	  _createClass(Task, [{
+	    key: "addNewTask",
+	    value: function addNewTask() {
+	      this.props.addNewTask(this.state.newTask);
+	      this.setState({
+	        newTask: null
+	      });
+	    }
+	  }, {
+	    key: "insertNewTask",
+	    value: function insertNewTask(event) {
+	      event.preventDefault();
+	      var date = new Date();
+	
+	      this.setState({
+	        newTask: {
+	          id: this.props.tasks.length,
+	          name: '',
+	          description: '',
+	          createDate: date,
+	          editDate: date,
+	          deleteDate: null,
+	          done: false,
+	          projects: []
+	        }
+	      });
+	    }
+	  }, {
+	    key: "onInputNewTaskName",
+	    value: function onInputNewTaskName(event) {
+	      this.setState({
+	        newTask: Object.assign(this.state.newTask, {
+	          name: event.target.value
+	        })
+	      });
+	    }
+	  }, {
+	    key: "onInputNewTaskDescription",
+	    value: function onInputNewTaskDescription(event) {
+	      this.setState({
+	        newTask: Object.assign(this.state.newTask, {
+	          description: event.target.value
+	        })
+	      });
+	    }
+	  }, {
 	    key: "filteredData",
 	    value: function filteredData() {
 	      var _this2 = this;
@@ -21699,15 +21737,13 @@
 	  }, {
 	    key: "render",
 	    value: function render() {
+	      var _this3 = this;
+	
 	      var task = this.filteredData().map(function (task, index) {
 	        return _react2.default.createElement(
 	          "li",
 	          { className: "task--list list_" + index + " " + ((index + 1) % 2 === 0 ? 'even' : ''), key: task.id },
-	          _react2.default.createElement(
-	            "div",
-	            { className: "task--list--done-toggle" },
-	            _react2.default.createElement("i", { className: "fa " + (task.done ? 'fa-check-square-o' : 'fa-square-o'), "aria-hidden": "true" })
-	          ),
+	          _react2.default.createElement("div", { className: "task--list--done-toggle" }),
 	          _react2.default.createElement(
 	            "div",
 	            { className: "task--list--conent" },
@@ -21732,9 +21768,44 @@
 	      });
 	
 	      return _react2.default.createElement(
-	        "ul",
-	        { className: "task--lists" },
-	        task
+	        "div",
+	        { className: "todo-tasks" },
+	        this.state.newTask ? _react2.default.createElement(
+	          "div",
+	          { className: "new-task" },
+	          _react2.default.createElement(
+	            "div",
+	            { className: "new-task--name" },
+	            _react2.default.createElement("input", { type: "text", onInput: function onInput(event) {
+	                return _this3.onInputNewTaskName(event);
+	              }, value: this.state.newTask.name })
+	          ),
+	          _react2.default.createElement(
+	            "div",
+	            { className: "new-task--description" },
+	            _react2.default.createElement("input", { type: "text", onInput: function onInput(event) {
+	                return _this3.onInputNewTaskDescription(event);
+	              }, value: this.state.newTask.description })
+	          ),
+	          _react2.default.createElement(
+	            "a",
+	            { href: "#add-new-task", onClick: function onClick(event) {
+	                return _this3.addNewTask(event);
+	              } },
+	            "add new task"
+	          )
+	        ) : _react2.default.createElement(
+	          "a",
+	          { href: "#add-new-task", onClick: function onClick(event) {
+	              return _this3.insertNewTask(event);
+	            } },
+	          "Add New Task"
+	        ),
+	        _react2.default.createElement(
+	          "ul",
+	          { className: "task--lists" },
+	          task
+	        )
 	      );
 	    }
 	  }]);
@@ -21743,6 +21814,53 @@
 	}(_react2.default.Component);
 	
 	exports.default = Task;
+
+/***/ },
+/* 175 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var projects = exports.projects = function () {
+	  var arr = [];
+	  for (var i = 0, len = 100; i < len; i++) {
+	    var date = new Date();
+	    arr.push({
+	      id: arr.length,
+	      name: "Project-" + arr.length,
+	      description: "fuga-" + arr.length,
+	      createDate: date,
+	      editDate: date,
+	      deleteDate: null,
+	      done: false,
+	      tasks: []
+	    });
+	  }
+	
+	  return arr;
+	}();
+	
+	var tasks = exports.tasks = function () {
+	  var arr = [];
+	  // for (let i = 0, len = 100; i < len; i ++) {
+	  //   const date = new Date()
+	  //   arr.push({
+	  //     id: arr.length,
+	  //     name: `TASK-${arr.length}`,
+	  //     description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+	  //     createDate: date,
+	  //     editDate: date,
+	  //     deleteDate: null,
+	  //     done: false,
+	  //     project: null
+	  //   })
+	  // }
+	
+	  return arr;
+	}();
 
 /***/ }
 /******/ ]);
