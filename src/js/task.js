@@ -28,8 +28,8 @@ export default class Task extends React.Component {
         id: this.props.tasks.length,
         name: '',
         description: '',
-        createDate: date,
-        editDate: date,
+        createDate: date.getTime(),
+        editDate: date.getTime(),
         deleteDate: null,
         done: false,
         projects: []
@@ -63,21 +63,35 @@ export default class Task extends React.Component {
 
   render () {
     const task = this.filteredData().map((task, index) => {
-      return (
-        <li className={`task--list list_${index} ${(index + 1) % 2 === 0? 'even' : ''}`} key={task.id}>
-          <div className='task--list--done-toggle'>
+      const createDate = new Date(task.createDate)
+      const editDate = new Date(task.editDate)
+      const listClass = [
+        'list',
+        `list_${index}`,
+        `${(index + 1) % 2 === 0? 'even' : ''}`,
+        `${task.done ? 'is-done' : ''}`
+      ]
 
-            {/* <i className={`fa ${task.done ? 'fa-check-square-o' : 'fa-square-o'}`} aria-hidden='true'></i> */}
+      return (
+        <li
+          className={listClass.filter(item => item).join(' ')}
+          key={task.id}
+        >
+          <div
+            className='list--done-toggle'
+            onClick={() => this.props.onDoneTask(task.id)}
+          >
+            { task.done ? <i className='fa fa-check' aria-hidden='true'></i> : '' }
           </div>
-          <div className='task--list--conent'>
-            <h2 className='task--list--title'>
+          <div className='list--content'>
+            <h2 className='list--title'>
               {task.name}
             </h2>
-            <div className='task--list--date'>
-              {`${task.createDate.getFullYear()}/${task.createDate.getMonth() + 1}/${task.createDate.getDate()} (${weekday[task.createDate.getDay()]})`}
-              {task.createDate !== task.editDate ? ` | ${task.editDate.getFullYear()}/${task.editDate.getMonth() + 1}/${task.editDate.getDate()} (${weekday[task.editDate.getDay()]})` : ''}
+            <div className='list--date'>
+              {`${createDate.getFullYear()}/${createDate.getMonth() + 1}/${createDate.getDate()} (${weekday[createDate.getDay()]})`}
+              {task.createDate !== task.editDate ? ` | ${editDate.getFullYear()}/${editDate.getMonth() + 1}/${editDate.getDate()} (${weekday[editDate.getDay()]})` : ''}
             </div>
-            <p className='task--list--description'>
+            <p className='list--description'>
               {task.description}
             </p>
           </div>
@@ -97,7 +111,7 @@ export default class Task extends React.Component {
             :
             <a href='#add-new-task' onClick={ (event) => this.insertNewTask(event) }>Add New Task</a>
         }
-        <ul className='task--lists'>
+        <ul className='list-container'>
           {task}
         </ul>
       </div>

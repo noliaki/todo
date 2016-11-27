@@ -21,11 +21,9 @@ class TodoApp extends React.Component {
 
   componentDidMount () {
     const tasks = JSON.parse(window.localStorage.getItem(storageName))
-    console.log(tasks)
     if (!tasks.length) {
       return
     }
-    console.log('run')
     tasks.forEach((task) => {
       task.createDate = new Date(Date.parse(task.createDate))
       task.editDate = new Date(Date.parse(task.editDate))
@@ -36,10 +34,13 @@ class TodoApp extends React.Component {
     })
   }
 
+  save () {
+    window.localStorage.setItem(storageName, JSON.stringify(this.state.tasks))
+  }
+
   addNewTask (newTask) {
     this.state.tasks.push(newTask)
-    console.log(this.state.tasks)
-    window.localStorage.setItem(storageName, JSON.stringify(this.state.tasks))
+    this.save()
   }
 
   onInput (event) {
@@ -47,6 +48,16 @@ class TodoApp extends React.Component {
     this.setState({
       searchText: event.currentTarget.value
     })
+  }
+
+  onDoneTask (id) {
+    const tasks = this.state.tasks
+    const targetTask = tasks.find(task => task.id === id)
+    targetTask.done = !targetTask.done
+    this.setState({
+      tasks
+    })
+    this.save()
   }
 
   render () {
@@ -59,6 +70,7 @@ class TodoApp extends React.Component {
         <Task tasks = { this.state.tasks }
           searchText = { this.state.searchText }
           addNewTask = {(newTask) => this.addNewTask(newTask)}
+          onDoneTask = {(id) => this.onDoneTask(id)}
         />
       </div>
     )

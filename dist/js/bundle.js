@@ -98,11 +98,9 @@
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
 	      var tasks = JSON.parse(window.localStorage.getItem(storageName));
-	      console.log(tasks);
 	      if (!tasks.length) {
 	        return;
 	      }
-	      console.log('run');
 	      tasks.forEach(function (task) {
 	        task.createDate = new Date(Date.parse(task.createDate));
 	        task.editDate = new Date(Date.parse(task.editDate));
@@ -113,11 +111,15 @@
 	      });
 	    }
 	  }, {
+	    key: 'save',
+	    value: function save() {
+	      window.localStorage.setItem(storageName, JSON.stringify(this.state.tasks));
+	    }
+	  }, {
 	    key: 'addNewTask',
 	    value: function addNewTask(newTask) {
 	      this.state.tasks.push(newTask);
-	      console.log(this.state.tasks);
-	      window.localStorage.setItem(storageName, JSON.stringify(this.state.tasks));
+	      this.save();
 	    }
 	  }, {
 	    key: 'onInput',
@@ -126,6 +128,19 @@
 	      this.setState({
 	        searchText: event.currentTarget.value
 	      });
+	    }
+	  }, {
+	    key: 'onDoneTask',
+	    value: function onDoneTask(id) {
+	      var tasks = this.state.tasks;
+	      var targetTask = tasks.find(function (task) {
+	        return task.id === id;
+	      });
+	      targetTask.done = !targetTask.done;
+	      this.setState({
+	        tasks: tasks
+	      });
+	      this.save();
 	    }
 	  }, {
 	    key: 'render',
@@ -145,6 +160,9 @@
 	          searchText: this.state.searchText,
 	          addNewTask: function addNewTask(newTask) {
 	            return _this2.addNewTask(newTask);
+	          },
+	          onDoneTask: function onDoneTask(id) {
+	            return _this2.onDoneTask(id);
 	          }
 	        })
 	      );
@@ -21695,8 +21713,8 @@
 	          id: this.props.tasks.length,
 	          name: '',
 	          description: '',
-	          createDate: date,
-	          editDate: date,
+	          createDate: date.getTime(),
+	          editDate: date.getTime(),
 	          deleteDate: null,
 	          done: false,
 	          projects: []
@@ -21740,27 +21758,45 @@
 	      var _this3 = this;
 	
 	      var task = this.filteredData().map(function (task, index) {
+	        var createDate = new Date(task.createDate);
+	        var editDate = new Date(task.editDate);
+	        var listClass = ['list', "list_" + index, "" + ((index + 1) % 2 === 0 ? 'even' : ''), "" + (task.done ? 'is-done' : '')];
+	
 	        return _react2.default.createElement(
 	          "li",
-	          { className: "task--list list_" + index + " " + ((index + 1) % 2 === 0 ? 'even' : ''), key: task.id },
-	          _react2.default.createElement("div", { className: "task--list--done-toggle" }),
+	          {
+	            className: listClass.filter(function (item) {
+	              return item;
+	            }).join(' '),
+	            key: task.id
+	          },
 	          _react2.default.createElement(
 	            "div",
-	            { className: "task--list--conent" },
+	            {
+	              className: "list--done-toggle",
+	              onClick: function onClick() {
+	                return _this3.props.onDoneTask(task.id);
+	              }
+	            },
+	            task.done ? _react2.default.createElement("i", { className: "fa fa-check", "aria-hidden": "true" }) : ''
+	          ),
+	          _react2.default.createElement(
+	            "div",
+	            { className: "list--content" },
 	            _react2.default.createElement(
 	              "h2",
-	              { className: "task--list--title" },
+	              { className: "list--title" },
 	              task.name
 	            ),
 	            _react2.default.createElement(
 	              "div",
-	              { className: "task--list--date" },
-	              task.createDate.getFullYear() + "/" + (task.createDate.getMonth() + 1) + "/" + task.createDate.getDate() + " (" + _utils.weekday[task.createDate.getDay()] + ")",
-	              task.createDate !== task.editDate ? " | " + task.editDate.getFullYear() + "/" + (task.editDate.getMonth() + 1) + "/" + task.editDate.getDate() + " (" + _utils.weekday[task.editDate.getDay()] + ")" : ''
+	              { className: "list--date" },
+	              createDate.getFullYear() + "/" + (createDate.getMonth() + 1) + "/" + createDate.getDate() + " (" + _utils.weekday[createDate.getDay()] + ")",
+	              task.createDate !== task.editDate ? " | " + editDate.getFullYear() + "/" + (editDate.getMonth() + 1) + "/" + editDate.getDate() + " (" + _utils.weekday[editDate.getDay()] + ")" : ''
 	            ),
 	            _react2.default.createElement(
 	              "p",
-	              { className: "task--list--description" },
+	              { className: "list--description" },
 	              task.description
 	            )
 	          )
@@ -21803,7 +21839,7 @@
 	        ),
 	        _react2.default.createElement(
 	          "ul",
-	          { className: "task--lists" },
+	          { className: "list-container" },
 	          task
 	        )
 	      );

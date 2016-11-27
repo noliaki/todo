@@ -8,6 +8,9 @@ color-base = #2C3E50;
 color-blue = #3498DB;
 color-accent = #E74C3C;
 color-border = darken(color-gray, 3%);
+color-border-darken = darken(color-border, 10%);
+color-done = lighten(color-gray, 50%);
+color-done-even = lighten(color-gray, 40%);
 
 border-radius = 7px
 
@@ -21,36 +24,44 @@ body
   max-width: size-content;
   margin: auto;
 
-.project--lists
-.task--lists
+.list-container
   min-height: 3em;
   border-radius: border-radius;
   overflow: hidden;
   border: 1px solid color-border
 
-.project--list
-.task--list
+.list
   display: flex;
   align-items: center;
-  padding: 1rem 2rem;
+  padding: 7px 14px;
   background-color: color-white;
-  border-top: 1px solid darken(color-border, 15%)
+  border-top: 1px solid color-border-darken
 
   &:first-child
     border-top: none;
 
   &.even
-    border-top: 1px solid darken(color-border, 10%)
-    background-color: darken(color-white, 1%)
+    background-color: darken(color-white, 1%);
+    &.is-done
+      background-color: color-done-even
 
-.project--list--done-toggle
-.task--list--done-toggle
+  &.is-done
+    background-color: color-done
+    text-decoration: line-through;
+    color: lighten(color-base, 70%)
+
+.list--done-toggle
   cursor: pointer;
   margin-right: 20px;
   width: 25px;
   height: 25px;
-  // background-color: darken(color-border, 10%)
   border: 1px solid color-border
+  line-height: 0
+  font-size: 1.5rem;
+  color: color-blue
 
-.task--list--date
-  font-size: 0.8rem;
+.list--title
+  font-size: 1.2rem;
+
+.list--date
+  font-size: 0.7rem;
