@@ -24,11 +24,6 @@ class TodoApp extends React.Component {
     if (!tasks.length) {
       return
     }
-    tasks.forEach((task) => {
-      task.createDate = new Date(Date.parse(task.createDate))
-      task.editDate = new Date(Date.parse(task.editDate))
-      task.deleteDate = task.deleteDate ? new Date(Date.parse(task.deleteDate)) : null
-    })
     this.setState({
       tasks: tasks
     })
@@ -39,8 +34,10 @@ class TodoApp extends React.Component {
   }
 
   addNewTask (newTask) {
+    console.log(newTask)
     this.state.tasks.push(newTask)
     this.save()
+    console.log(this.state.tasks)
   }
 
   onInput (event) {

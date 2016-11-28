@@ -101,11 +101,6 @@
 	      if (!tasks.length) {
 	        return;
 	      }
-	      tasks.forEach(function (task) {
-	        task.createDate = new Date(Date.parse(task.createDate));
-	        task.editDate = new Date(Date.parse(task.editDate));
-	        task.deleteDate = task.deleteDate ? new Date(Date.parse(task.deleteDate)) : null;
-	      });
 	      this.setState({
 	        tasks: tasks
 	      });
@@ -118,8 +113,10 @@
 	  }, {
 	    key: 'addNewTask',
 	    value: function addNewTask(newTask) {
+	      console.log(newTask);
 	      this.state.tasks.push(newTask);
 	      this.save();
+	      console.log(this.state.tasks);
 	    }
 	  }, {
 	    key: 'onInput',
@@ -21696,8 +21693,17 @@
 	
 	  _createClass(Task, [{
 	    key: "addNewTask",
-	    value: function addNewTask() {
+	    value: function addNewTask(event) {
+	      event.preventDefault();
 	      this.props.addNewTask(this.state.newTask);
+	      this.setState({
+	        newTask: null
+	      });
+	    }
+	  }, {
+	    key: "cancelNewTask",
+	    value: function cancelNewTask(event) {
+	      event.preventDefault();
 	      this.setState({
 	        newTask: null
 	      });
@@ -21738,6 +21744,11 @@
 	          description: event.target.value
 	        })
 	      });
+	    }
+	  }, {
+	    key: "hasContent",
+	    value: function hasContent() {
+	      return this.state.newTask.name;
 	    }
 	  }, {
 	    key: "filteredData",
@@ -21803,39 +21814,74 @@
 	        );
 	      });
 	
-	      return _react2.default.createElement(
-	        "div",
-	        { className: "todo-tasks" },
-	        this.state.newTask ? _react2.default.createElement(
+	      var newTaskDom = '';
+	
+	      if (this.state.newTask) {
+	        newTaskDom = _react2.default.createElement(
 	          "div",
 	          { className: "new-task" },
 	          _react2.default.createElement(
 	            "div",
 	            { className: "new-task--name" },
-	            _react2.default.createElement("input", { type: "text", onInput: function onInput(event) {
+	            _react2.default.createElement("input", { type: "text",
+	              className: "new-task--input",
+	              onInput: function onInput(event) {
 	                return _this3.onInputNewTaskName(event);
-	              }, value: this.state.newTask.name })
+	              },
+	              value: this.state.newTask.name,
+	              placeholder: "Title" })
 	          ),
 	          _react2.default.createElement(
 	            "div",
-	            { className: "new-task--description" },
-	            _react2.default.createElement("input", { type: "text", onInput: function onInput(event) {
+	            { className: "new-task--description mt-10" },
+	            _react2.default.createElement("textarea", { className: "new-task--textarea",
+	              onInput: function onInput(event) {
 	                return _this3.onInputNewTaskDescription(event);
-	              }, value: this.state.newTask.description })
+	              },
+	              value: this.state.newTask.description,
+	              placeholder: "leave a comment" })
 	          ),
 	          _react2.default.createElement(
-	            "a",
-	            { href: "#add-new-task", onClick: function onClick(event) {
-	                return _this3.addNewTask(event);
-	              } },
-	            "add new task"
+	            "div",
+	            { className: "new-task--action mt-10" },
+	            _react2.default.createElement(
+	              "a",
+	              { href: "#add-new-task",
+	                className: "btn btn-add " + (this.hasContent() ? 'is-available' : 'is-disabled'),
+	                onClick: function onClick(event) {
+	                  return _this3.addNewTask(event);
+	                } },
+	              _react2.default.createElement("i", { className: "fa fa-plus mr-10", "aria-hidden": "true" }),
+	              "submit new task"
+	            ),
+	            _react2.default.createElement(
+	              "a",
+	              { href: "#cancel", className: "btn btn-cancel ml-15", onClick: function onClick(event) {
+	                  return _this3.cancelNewTask(event);
+	                } },
+	              _react2.default.createElement("i", { className: "fa fa-ban mr-10", "aria-hidden": "true" }),
+	              "cancel"
+	            )
 	          )
-	        ) : _react2.default.createElement(
+	        );
+	      } else {
+	        newTaskDom = _react2.default.createElement(
 	          "a",
-	          { href: "#add-new-task", onClick: function onClick(event) {
+	          { href: "#add-new-task", className: "btn btn-add", onClick: function onClick(event) {
 	              return _this3.insertNewTask(event);
 	            } },
-	          "Add New Task"
+	          _react2.default.createElement("i", { className: "fa fa-plus mr-10", "aria-hidden": "true" }),
+	          "add new task"
+	        );
+	      }
+	
+	      return _react2.default.createElement(
+	        "div",
+	        { className: "todo-tasks" },
+	        _react2.default.createElement(
+	          "div",
+	          { className: "new-container" },
+	          newTaskDom
 	        ),
 	        _react2.default.createElement(
 	          "ul",

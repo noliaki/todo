@@ -12,8 +12,16 @@ export default class Task extends React.Component {
     }
   }
 
-  addNewTask () {
+  addNewTask (event) {
+    event.preventDefault()
     this.props.addNewTask(this.state.newTask)
+    this.setState({
+      newTask: null
+    })
+  }
+
+  cancelNewTask (event) {
+    event.preventDefault()
     this.setState({
       newTask: null
     })
@@ -51,6 +59,10 @@ export default class Task extends React.Component {
         description: event.target.value
       })
     })
+  }
+
+  hasContent () {
+    return this.state.newTask.name
   }
 
   filteredData () {
@@ -99,18 +111,52 @@ export default class Task extends React.Component {
       )
     })
 
+    let newTaskDom = ''
+
+    if (this.state.newTask) {
+      newTaskDom = (
+        <div className='new-task'>
+          <div className='new-task--name'>
+            <input type='text'
+              className='new-task--input'
+              onInput = {(event) => this.onInputNewTaskName(event)}
+              value={this.state.newTask.name}
+              placeholder='Title'/>
+          </div>
+          <div className='new-task--description mt-10'>
+            <textarea className='new-task--textarea'
+              onInput = {(event) => this.onInputNewTaskDescription(event)}
+              value={this.state.newTask.description}
+              placeholder='leave a comment' />
+          </div>
+          <div className='new-task--action mt-10'>
+            <a href='#add-new-task'
+              className={`btn btn-add ${this.hasContent() ? 'is-available' : 'is-disabled'}`}
+              onClick={ (event) => this.addNewTask(event) }>
+              <i className='fa fa-plus mr-10' aria-hidden='true'></i>
+              submit new task
+            </a>
+            <a href='#cancel' className='btn btn-cancel ml-15' onClick={ (event) => this.cancelNewTask(event) }>
+              <i className='fa fa-ban mr-10' aria-hidden='true'></i>
+              cancel
+            </a>
+          </div>
+        </div>
+      )
+    } else {
+      newTaskDom = (
+        <a href='#add-new-task' className='btn btn-add' onClick={ (event) => this.insertNewTask(event) }>
+          <i className='fa fa-plus mr-10' aria-hidden='true'></i>
+          add new task
+        </a>
+      )
+    }
+
     return (
       <div className='todo-tasks'>
-        {
-          this.state.newTask ?
-            <div className='new-task'>
-              <div className='new-task--name'><input type='text' onInput = {(event) => this.onInputNewTaskName(event)} value={this.state.newTask.name} /></div>
-              <div className='new-task--description'><input type='text' onInput = {(event) => this.onInputNewTaskDescription(event)} value={this.state.newTask.description} /></div>
-              <a href='#add-new-task' onClick={ (event) => this.addNewTask(event) }>add new task</a>
-            </div>
-            :
-            <a href='#add-new-task' onClick={ (event) => this.insertNewTask(event) }>Add New Task</a>
-        }
+        <div className='new-container'>
+          { newTaskDom }
+        </div>
         <ul className='list-container'>
           {task}
         </ul>

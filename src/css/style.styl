@@ -1,4 +1,5 @@
 @import "_reset"
+@import "_utils"
 
 size-content = 900px;
 
@@ -12,12 +13,45 @@ color-border-darken = darken(color-border, 10%);
 color-done = lighten(color-gray, 50%);
 color-done-even = lighten(color-gray, 40%);
 
-border-radius = 7px
+border-radius = 5px
 
 body
   font-size: 16px;
   background-color: color-white
   color: color-base
+
+input
+  color: color-base
+
+a
+  color: color-blue
+  text-decoration: none
+
+  &:hover
+    color: lighten(color-blue, 30%)
+
+.btn
+  display: inline-block
+  padding: 0.3em 0.7em
+  border: 1px solid color-border
+  border-radius: border-radius
+
+.btn-add
+  color: color-white
+  border-color: darken(color-blue, 10%)
+  background-color: color-blue
+  &:hover
+    color: color-white
+    background-color: lighten(color-blue, 10%)
+
+  &.is-disabled
+    opacity: 0.4
+    pointer-events: none
+
+.btn-cancel
+  color darken(color-gray, 50%)
+  &:hover
+    color darken(color-gray, 30%)
 
 #todo
   width: 80%;
@@ -50,6 +84,8 @@ body
     text-decoration: line-through;
     color: lighten(color-base, 70%)
 
+
+
 .list--done-toggle
   cursor: pointer;
   margin-right: 20px;
@@ -65,3 +101,28 @@ body
 
 .list--date
   font-size: 0.7rem;
+
+.new-container
+  margin: 20px 0
+
+.new-task--input
+.new-task--textarea
+  width: 100%
+  border: 1px solid color-border
+  border-radius: border-radius
+  padding 0.7rem 1rem
+  background-color lighten(color-gray, 30%)
+  outline none
+  &:focus
+    border-color color-blue
+    background-color color-white
+    box-shadow 0 0 3px 0 color-blue
+
+
+.new-task--input
+  font-size 1.2rem
+
+.new-task--textarea
+  font-size 1rem
+  min-height 5em
+  max-width 100%
