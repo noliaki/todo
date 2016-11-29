@@ -9,6 +9,7 @@ export default class Task extends React.Component {
 
     this.state = {
       newTask: null,
+      seekWord: '',
       sort: 'newer',
       sortOption: [
         '',
@@ -55,6 +56,12 @@ export default class Task extends React.Component {
         done: false,
         projects: []
       }
+    })
+  }
+
+  onInputSeekWord (event) {
+    this.setState({
+      seekWord: event.currentTarget.value
     })
   }
 
@@ -116,11 +123,15 @@ export default class Task extends React.Component {
     }
   }
 
-  filteredData () {
-    if ( !this.props.searchText ) return this.sortedTasks().filter(task => this.filterTask(task))
+  defaultOrderedTasks () {
+    return this.sortedTasks().filter(task => this.filterTask(task))
+  }
 
-    return this.sortedTasks().filter(task => this.filterTask(task)).filter((task) => {
-      return (task.name.indexOf(this.props.searchText) > -1 || task.description.indexOf(this.props.searchText) > -1) && !task.deleteDate
+  filteredData () {
+    if ( !this.state.seekWord ) return this.defaultOrderedTasks()
+
+    return this.defaultOrderedTasks().filter((task) => {
+      return (task.name.indexOf(this.state.seekWord) > -1 || task.description.indexOf(this.state.seekWord) > -1)
     })
   }
 
@@ -241,12 +252,22 @@ export default class Task extends React.Component {
           { newTaskDom }
         </div>
         <div className='list--action'>
-          <select className='list--action--select' name='sort' value={ this.state.sort } onChange={ (event) => this.onChangeSort(event) }>
-            { sortOption }
-          </select>
-          <select className='list--action--select' name='filter' value={ this.state.filter } onChange={ (event) => this.onChangeFilter(event) }>
-            { filterOption }
-          </select>
+          <div className='list-seek'>
+            <span className='form-tag'>sort</span>
+            <select className='list--action--select' name='sort' value={ this.state.sort } onChange={ (event) => this.onChangeSort(event) }>
+              { sortOption }
+            </select>
+          </div>
+          <div className='list-seek'>
+            <span className='form-tag'>filter</span>
+            <select className='list--action--select' name='filter' value={ this.state.filter } onChange={ (event) => this.onChangeFilter(event) }>
+              { filterOption }
+            </select>
+          </div>
+          <div className='list-seek'>
+            <span className='form-tag'>seek word</span>
+            <input className='list-seek--input' type='input' value={this.state.seekWord} onInput={(event) => this.onInputSeekWord(event)} />
+          </div>
         </div>
         <ul className='list-container'>
           {task}

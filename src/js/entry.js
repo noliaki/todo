@@ -65,18 +65,12 @@ class TodoApp extends React.Component {
 
   render () {
     return (
-      <div>
-        <input type = 'input'
-          onInput = { (event) => this.onInput(event) }
-          value = { this.state.searchText }
-        />
-        <Task tasks = { this.state.tasks }
-          searchText = { this.state.searchText }
-          addNewTask = { (newTask) => this.addNewTask(newTask) }
-          onDoneTask = { (id) => this.onDoneTask(id) }
-          onDeleteTask = { (id) => this.onDeleteTask(id) }
-        />
-      </div>
+      <Task tasks = { this.state.tasks }
+        searchText = { this.state.searchText }
+        addNewTask = { (newTask) => this.addNewTask(newTask) }
+        onDoneTask = { (id) => this.onDoneTask(id) }
+        onDeleteTask = { (id) => this.onDeleteTask(id) }
+      />
     )
   }
 }

@@ -153,28 +153,18 @@
 	    value: function render() {
 	      var _this2 = this;
 	
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        _react2.default.createElement('input', { type: 'input',
-	          onInput: function onInput(event) {
-	            return _this2.onInput(event);
-	          },
-	          value: this.state.searchText
-	        }),
-	        _react2.default.createElement(_task2.default, { tasks: this.state.tasks,
-	          searchText: this.state.searchText,
-	          addNewTask: function addNewTask(newTask) {
-	            return _this2.addNewTask(newTask);
-	          },
-	          onDoneTask: function onDoneTask(id) {
-	            return _this2.onDoneTask(id);
-	          },
-	          onDeleteTask: function onDeleteTask(id) {
-	            return _this2.onDeleteTask(id);
-	          }
-	        })
-	      );
+	      return _react2.default.createElement(_task2.default, { tasks: this.state.tasks,
+	        searchText: this.state.searchText,
+	        addNewTask: function addNewTask(newTask) {
+	          return _this2.addNewTask(newTask);
+	        },
+	        onDoneTask: function onDoneTask(id) {
+	          return _this2.onDoneTask(id);
+	        },
+	        onDeleteTask: function onDeleteTask(id) {
+	          return _this2.onDeleteTask(id);
+	        }
+	      });
 	    }
 	  }]);
 	
@@ -21699,6 +21689,7 @@
 	
 	    _this.state = {
 	      newTask: null,
+	      seekWord: '',
 	      sort: 'newer',
 	      sortOption: ['', 'newer', 'older'],
 	      filter: '',
@@ -21741,6 +21732,13 @@
 	          done: false,
 	          projects: []
 	        }
+	      });
+	    }
+	  }, {
+	    key: "onInputSeekWord",
+	    value: function onInputSeekWord(event) {
+	      this.setState({
+	        seekWord: event.currentTarget.value
 	      });
 	    }
 	  }, {
@@ -21810,18 +21808,23 @@
 	      }
 	    }
 	  }, {
-	    key: "filteredData",
-	    value: function filteredData() {
+	    key: "defaultOrderedTasks",
+	    value: function defaultOrderedTasks() {
 	      var _this2 = this;
-	
-	      if (!this.props.searchText) return this.sortedTasks().filter(function (task) {
-	        return _this2.filterTask(task);
-	      });
 	
 	      return this.sortedTasks().filter(function (task) {
 	        return _this2.filterTask(task);
-	      }).filter(function (task) {
-	        return (task.name.indexOf(_this2.props.searchText) > -1 || task.description.indexOf(_this2.props.searchText) > -1) && !task.deleteDate;
+	      });
+	    }
+	  }, {
+	    key: "filteredData",
+	    value: function filteredData() {
+	      var _this3 = this;
+	
+	      if (!this.state.seekWord) return this.defaultOrderedTasks();
+	
+	      return this.defaultOrderedTasks().filter(function (task) {
+	        return task.name.indexOf(_this3.state.seekWord) > -1 || task.description.indexOf(_this3.state.seekWord) > -1;
 	      });
 	    }
 	  }, {
@@ -21841,7 +21844,7 @@
 	  }, {
 	    key: "render",
 	    value: function render() {
-	      var _this3 = this;
+	      var _this4 = this;
 	
 	      var task = this.filteredData().map(function (task, index) {
 	        var createDate = new Date(task.createDate);
@@ -21861,7 +21864,7 @@
 	            {
 	              className: "list--done-toggle",
 	              onClick: function onClick() {
-	                return _this3.props.onDoneTask(task.id);
+	                return _this4.props.onDoneTask(task.id);
 	              }
 	            },
 	            task.done ? _react2.default.createElement("i", { className: "fa fa-check", "aria-hidden": "true" }) : ''
@@ -21889,7 +21892,7 @@
 	          _react2.default.createElement(
 	            "a",
 	            { href: "#delete-task", className: "list--delete", onClick: function onClick(event) {
-	                return _this3.props.onDeleteTask(task.id);
+	                return _this4.props.onDeleteTask(task.id);
 	              } },
 	            _react2.default.createElement("i", { className: "fa fa-times", "aria-hidden": "true" })
 	          )
@@ -21908,7 +21911,7 @@
 	            _react2.default.createElement("input", { type: "text",
 	              className: "new-task--input",
 	              onInput: function onInput(event) {
-	                return _this3.onInputNewTaskName(event);
+	                return _this4.onInputNewTaskName(event);
 	              },
 	              value: this.state.newTask.name,
 	              placeholder: "Title" })
@@ -21918,7 +21921,7 @@
 	            { className: "new-task--description mt-10" },
 	            _react2.default.createElement("textarea", { className: "new-task--textarea",
 	              onInput: function onInput(event) {
-	                return _this3.onInputNewTaskDescription(event);
+	                return _this4.onInputNewTaskDescription(event);
 	              },
 	              value: this.state.newTask.description,
 	              placeholder: "leave a comment" })
@@ -21931,7 +21934,7 @@
 	              { href: "#add-new-task",
 	                className: "btn btn-add " + (this.hasContent() ? 'is-available' : 'is-disabled'),
 	                onClick: function onClick(event) {
-	                  return _this3.addNewTask(event);
+	                  return _this4.addNewTask(event);
 	                } },
 	              _react2.default.createElement("i", { className: "fa fa-plus mr-10", "aria-hidden": "true" }),
 	              "submit new task"
@@ -21939,7 +21942,7 @@
 	            _react2.default.createElement(
 	              "a",
 	              { href: "#cancel", className: "btn btn-cancel ml-15", onClick: function onClick(event) {
-	                  return _this3.cancelNewTask(event);
+	                  return _this4.cancelNewTask(event);
 	                } },
 	              _react2.default.createElement("i", { className: "fa fa-ban mr-10", "aria-hidden": "true" }),
 	              "cancel"
@@ -21950,7 +21953,7 @@
 	        newTaskDom = _react2.default.createElement(
 	          "a",
 	          { href: "#add-new-task", className: "btn btn-add", onClick: function onClick(event) {
-	              return _this3.insertNewTask(event);
+	              return _this4.insertNewTask(event);
 	            } },
 	          _react2.default.createElement("i", { className: "fa fa-plus mr-10", "aria-hidden": "true" }),
 	          "add new task"
@@ -21985,18 +21988,48 @@
 	          "div",
 	          { className: "list--action" },
 	          _react2.default.createElement(
-	            "select",
-	            { className: "list--action--select", name: "sort", value: this.state.sort, onChange: function onChange(event) {
-	                return _this3.onChangeSort(event);
-	              } },
-	            sortOption
+	            "div",
+	            { className: "list-seek" },
+	            _react2.default.createElement(
+	              "span",
+	              { className: "form-tag" },
+	              "sort"
+	            ),
+	            _react2.default.createElement(
+	              "select",
+	              { className: "list--action--select", name: "sort", value: this.state.sort, onChange: function onChange(event) {
+	                  return _this4.onChangeSort(event);
+	                } },
+	              sortOption
+	            )
 	          ),
 	          _react2.default.createElement(
-	            "select",
-	            { className: "list--action--select", name: "filter", value: this.state.filter, onChange: function onChange(event) {
-	                return _this3.onChangeFilter(event);
-	              } },
-	            filterOption
+	            "div",
+	            { className: "list-seek" },
+	            _react2.default.createElement(
+	              "span",
+	              { className: "form-tag" },
+	              "filter"
+	            ),
+	            _react2.default.createElement(
+	              "select",
+	              { className: "list--action--select", name: "filter", value: this.state.filter, onChange: function onChange(event) {
+	                  return _this4.onChangeFilter(event);
+	                } },
+	              filterOption
+	            )
+	          ),
+	          _react2.default.createElement(
+	            "div",
+	            { className: "list-seek" },
+	            _react2.default.createElement(
+	              "span",
+	              { className: "form-tag" },
+	              "seek word"
+	            ),
+	            _react2.default.createElement("input", { className: "list-seek--input", type: "input", value: this.state.seekWord, onInput: function onInput(event) {
+	                return _this4.onInputSeekWord(event);
+	              } })
 	          )
 	        ),
 	        _react2.default.createElement(

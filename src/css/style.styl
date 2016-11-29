@@ -136,7 +136,7 @@ a
     color lighten(color-accent, 50%)
 
 .list--action
-  margin: 0 0 10px
+  display: flex
 
 .list--action--select
   display: inline-block;
@@ -147,5 +147,26 @@ a
   margin-right: 10px
   font-size 1rem
   border: 1px solid color-border
+  border-radius: 0 border-radius border-radius 0
+  appearance: none
   &:focus
     background-color: color-white
+
+.list-seek
+  display: flex
+  margin: 0 0 10px
+
+.list-seek--input
+  font-size: 1rem
+  padding 0.4rem 0.7rem
+  border: 1px solid color-border
+  border-radius: 0 border-radius border-radius 0
+
+.form-tag
+  display: flex
+  // color: color-white
+  padding: 0 8px
+  align-items: center
+  border: 1px solid color-border
+  background: color-gray
+  border-radius: border-radius 0 0 border-radius
