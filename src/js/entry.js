@@ -10,8 +10,6 @@ const storageName = 'todo'
 class TodoApp extends React.Component {
   constructor (props) {
     super (props)
-    // this.onInput = this.onInput.bind(this)
-    const date = new Date()
     this.state = {
       projects,
       tasks,
@@ -34,10 +32,8 @@ class TodoApp extends React.Component {
   }
 
   addNewTask (newTask) {
-    console.log(newTask)
     this.state.tasks.push(newTask)
     this.save()
-    console.log(this.state.tasks)
   }
 
   onInput (event) {
@@ -57,6 +53,16 @@ class TodoApp extends React.Component {
     this.save()
   }
 
+  onDeleteTask (id) {
+    const tasks = this.state.tasks
+    const targetTask = tasks.find(task => task.id === id)
+    targetTask.deleteDate = new Date().getTime()
+    this.setState({
+      tasks
+    })
+    this.save()
+  }
+
   render () {
     return (
       <div>
@@ -66,8 +72,9 @@ class TodoApp extends React.Component {
         />
         <Task tasks = { this.state.tasks }
           searchText = { this.state.searchText }
-          addNewTask = {(newTask) => this.addNewTask(newTask)}
-          onDoneTask = {(id) => this.onDoneTask(id)}
+          addNewTask = { (newTask) => this.addNewTask(newTask) }
+          onDoneTask = { (id) => this.onDoneTask(id) }
+          onDeleteTask = { (id) => this.onDeleteTask(id) }
         />
       </div>
     )

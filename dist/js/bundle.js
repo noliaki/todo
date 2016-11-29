@@ -82,10 +82,8 @@
 	  function TodoApp(props) {
 	    _classCallCheck(this, TodoApp);
 	
-	    // this.onInput = this.onInput.bind(this)
 	    var _this = _possibleConstructorReturn(this, (TodoApp.__proto__ || Object.getPrototypeOf(TodoApp)).call(this, props));
 	
-	    var date = new Date();
 	    _this.state = {
 	      projects: _initialState.projects,
 	      tasks: _initialState.tasks,
@@ -113,10 +111,8 @@
 	  }, {
 	    key: 'addNewTask',
 	    value: function addNewTask(newTask) {
-	      console.log(newTask);
 	      this.state.tasks.push(newTask);
 	      this.save();
-	      console.log(this.state.tasks);
 	    }
 	  }, {
 	    key: 'onInput',
@@ -134,6 +130,19 @@
 	        return task.id === id;
 	      });
 	      targetTask.done = !targetTask.done;
+	      this.setState({
+	        tasks: tasks
+	      });
+	      this.save();
+	    }
+	  }, {
+	    key: 'onDeleteTask',
+	    value: function onDeleteTask(id) {
+	      var tasks = this.state.tasks;
+	      var targetTask = tasks.find(function (task) {
+	        return task.id === id;
+	      });
+	      targetTask.deleteDate = new Date().getTime();
 	      this.setState({
 	        tasks: tasks
 	      });
@@ -160,6 +169,9 @@
 	          },
 	          onDoneTask: function onDoneTask(id) {
 	            return _this2.onDoneTask(id);
+	          },
+	          onDeleteTask: function onDeleteTask(id) {
+	            return _this2.onDeleteTask(id);
 	          }
 	        })
 	      );
@@ -21686,7 +21698,11 @@
 	    var _this = _possibleConstructorReturn(this, (Task.__proto__ || Object.getPrototypeOf(Task)).call(this, props));
 	
 	    _this.state = {
-	      newTask: null
+	      newTask: null,
+	      sort: '',
+	      sortOption: ['', 'newer', 'older'],
+	      filter: '',
+	      filterOption: ['', 'active', 'done', 'deleted']
 	    };
 	    return _this;
 	  }
@@ -21750,17 +21766,76 @@
 	    value: function hasContent() {
 	      return this.state.newTask.name;
 	    }
+	
+	    // sort
+	
+	  }, {
+	    key: "newerTasks",
+	    value: function newerTasks() {
+	      return this.props.tasks.sort(function (a, b) {
+	        return b.createDate - a.createDate;
+	      });
+	    }
+	  }, {
+	    key: "olderTasks",
+	    value: function olderTasks() {
+	      return this.props.tasks.sort(function (a, b) {
+	        return a.createDate - b.createDate;
+	      });
+	    }
+	  }, {
+	    key: "sortedTasks",
+	    value: function sortedTasks() {
+	      switch (this.state.sort) {
+	        case 'newer':
+	          return this.newerTasks();
+	        case 'older':
+	          return this.olderTasks();
+	        default:
+	          return this.newerTasks();
+	      }
+	    }
+	  }, {
+	    key: "filterTask",
+	    value: function filterTask(task) {
+	      switch (this.state.filter) {
+	        case 'active':
+	          return !task.deleteDate && !task.done;
+	        case 'done':
+	          return task.done;
+	        case 'deleted':
+	          return task.deleteDate;
+	        default:
+	          return true;
+	      }
+	    }
 	  }, {
 	    key: "filteredData",
 	    value: function filteredData() {
 	      var _this2 = this;
 	
-	      if (!this.props.searchText) return this.props.tasks.filter(function (task) {
-	        return !task.deleteDate;
+	      if (!this.props.searchText) return this.sortedTasks().filter(function (task) {
+	        return _this2.filterTask(task);
 	      });
 	
-	      return this.props.tasks.filter(function (task) {
+	      return this.sortedTasks().filter(function (task) {
+	        return filterTask(task);
+	      }).filter(function (task) {
 	        return (task.name.indexOf(_this2.props.searchText) > -1 || task.description.indexOf(_this2.props.searchText) > -1) && !task.deleteDate;
+	      });
+	    }
+	  }, {
+	    key: "onChangeSort",
+	    value: function onChangeSort(event) {
+	      this.setState({
+	        sort: event.currentTarget.value
+	      });
+	    }
+	  }, {
+	    key: "onChangeFilter",
+	    value: function onChangeFilter(event) {
+	      this.setState({
+	        filter: event.currentTarget.value
 	      });
 	    }
 	  }, {
@@ -21810,6 +21885,13 @@
 	              { className: "list--description" },
 	              task.description
 	            )
+	          ),
+	          _react2.default.createElement(
+	            "a",
+	            { href: "#delete-task", className: "list--delete", onClick: function onClick(event) {
+	                return _this3.props.onDeleteTask(task.id);
+	              } },
+	            _react2.default.createElement("i", { className: "fa fa-times", "aria-hidden": "true" })
 	          )
 	        );
 	      });
@@ -21875,6 +21957,22 @@
 	        );
 	      }
 	
+	      var sortOption = this.state.sortOption.map(function (item) {
+	        return _react2.default.createElement(
+	          "option",
+	          { value: item, key: item },
+	          item
+	        );
+	      });
+	
+	      var filterOption = this.state.filterOption.map(function (item) {
+	        return _react2.default.createElement(
+	          "option",
+	          { value: item, key: item },
+	          item
+	        );
+	      });
+	
 	      return _react2.default.createElement(
 	        "div",
 	        { className: "todo-tasks" },
@@ -21882,6 +21980,20 @@
 	          "div",
 	          { className: "new-container" },
 	          newTaskDom
+	        ),
+	        _react2.default.createElement(
+	          "select",
+	          { name: "sort", value: this.state.sort, onChange: function onChange(event) {
+	              return _this3.onChangeSort(event);
+	            } },
+	          sortOption
+	        ),
+	        _react2.default.createElement(
+	          "select",
+	          { name: "filter", value: this.state.filter, onChange: function onChange(event) {
+	              return _this3.onChangeFilter(event);
+	            } },
+	          filterOption
 	        ),
 	        _react2.default.createElement(
 	          "ul",

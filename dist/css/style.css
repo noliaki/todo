@@ -388,3 +388,10 @@ a:hover {
   min-height: 5em;
   max-width: 100%;
 }
+.list--delete {
+  margin: 0 0 0 auto;
+  color: #e74c3c;
+}
+.list--delete:hover {
+  color: #f3a69e;
+}

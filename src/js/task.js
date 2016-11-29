@@ -8,7 +8,20 @@ export default class Task extends React.Component {
     super (props)
 
     this.state = {
-      newTask: null
+      newTask: null,
+      sort: '',
+      sortOption: [
+        '',
+        'newer',
+        'older'
+      ],
+      filter: '',
+      filterOption: [
+        '',
+        'active',
+        'done',
+        'deleted'
+      ]
     }
   }
 
@@ -65,11 +78,61 @@ export default class Task extends React.Component {
     return this.state.newTask.name
   }
 
-  filteredData () {
-    if ( !this.props.searchText ) return this.props.tasks.filter(task => !task.deleteDate)
+  // sort
+  newerTasks () {
+    return this.props.tasks.sort((a, b) => {
+      return b.createDate - a.createDate
+    })
+  }
 
-    return this.props.tasks.filter((task) => {
+  olderTasks () {
+    return this.props.tasks.sort((a, b) => {
+      return a.createDate - b.createDate
+    })
+  }
+
+
+  sortedTasks () {
+    switch (this.state.sort) {
+      case 'newer' :
+        return this.newerTasks()
+      case 'older' :
+        return this.olderTasks()
+      default:
+        return this.newerTasks()
+    }
+  }
+
+  filterTask (task) {
+    switch (this.state.filter) {
+      case 'active' :
+        return !task.deleteDate && !task.done
+      case 'done' :
+        return task.done
+      case 'deleted' :
+        return task.deleteDate
+      default:
+        return true
+    }
+  }
+
+  filteredData () {
+    if ( !this.props.searchText ) return this.sortedTasks().filter(task => this.filterTask(task))
+
+    return this.sortedTasks().filter(task => filterTask(task)).filter((task) => {
       return (task.name.indexOf(this.props.searchText) > -1 || task.description.indexOf(this.props.searchText) > -1) && !task.deleteDate
+    })
+  }
+
+  onChangeSort (event) {
+    this.setState({
+      sort: event.currentTarget.value
+    })
+  }
+
+  onChangeFilter (event) {
+    this.setState({
+      filter: event.currentTarget.value
     })
   }
 
@@ -107,6 +170,9 @@ export default class Task extends React.Component {
               {task.description}
             </p>
           </div>
+          <a href='#delete-task' className='list--delete' onClick={(event) => this.props.onDeleteTask(task.id)} >
+            <i className="fa fa-times" aria-hidden="true"></i>
+          </a>
         </li>
       )
     })
@@ -152,11 +218,33 @@ export default class Task extends React.Component {
       )
     }
 
+    const sortOption = this.state.sortOption.map((item) => {
+      return (
+        <option value={ item } key={ item }>
+          { item }
+        </option>
+      )
+    })
+
+    const filterOption = this.state.filterOption.map((item) => {
+      return (
+        <option value={ item } key={ item }>
+          { item }
+        </option>
+      )
+    })
+
     return (
       <div className='todo-tasks'>
         <div className='new-container'>
           { newTaskDom }
         </div>
+        <select name='sort' value={ this.state.sort } onChange={ (event) => this.onChangeSort(event) }>
+          { sortOption }
+        </select>
+        <select name='filter' value={ this.state.filter } onChange={ (event) => this.onChangeFilter(event) }>
+          { filterOption }
+        </select>
         <ul className='list-container'>
           {task}
         </ul>
