@@ -21699,7 +21699,7 @@
 	
 	    _this.state = {
 	      newTask: null,
-	      sort: '',
+	      sort: 'newer',
 	      sortOption: ['', 'newer', 'older'],
 	      filter: '',
 	      filterOption: ['', 'active', 'done', 'deleted']
@@ -21806,7 +21806,7 @@
 	        case 'deleted':
 	          return task.deleteDate;
 	        default:
-	          return true;
+	          return !task.deleteDate;
 	      }
 	    }
 	  }, {
@@ -21819,7 +21819,7 @@
 	      });
 	
 	      return this.sortedTasks().filter(function (task) {
-	        return filterTask(task);
+	        return _this2.filterTask(task);
 	      }).filter(function (task) {
 	        return (task.name.indexOf(_this2.props.searchText) > -1 || task.description.indexOf(_this2.props.searchText) > -1) && !task.deleteDate;
 	      });
@@ -21846,7 +21846,7 @@
 	      var task = this.filteredData().map(function (task, index) {
 	        var createDate = new Date(task.createDate);
 	        var editDate = new Date(task.editDate);
-	        var listClass = ['list', "list_" + index, "" + ((index + 1) % 2 === 0 ? 'even' : ''), "" + (task.done ? 'is-done' : '')];
+	        var listClass = ['list', "list_" + index, "" + ((index + 1) % 2 === 0 ? 'even' : ''), "" + (task.done ? 'is-done' : ''), "" + (task.deleteDate ? 'is-deleted' : '')];
 	
 	        return _react2.default.createElement(
 	          "li",
@@ -21982,18 +21982,22 @@
 	          newTaskDom
 	        ),
 	        _react2.default.createElement(
-	          "select",
-	          { name: "sort", value: this.state.sort, onChange: function onChange(event) {
-	              return _this3.onChangeSort(event);
-	            } },
-	          sortOption
-	        ),
-	        _react2.default.createElement(
-	          "select",
-	          { name: "filter", value: this.state.filter, onChange: function onChange(event) {
-	              return _this3.onChangeFilter(event);
-	            } },
-	          filterOption
+	          "div",
+	          { className: "list--action" },
+	          _react2.default.createElement(
+	            "select",
+	            { className: "list--action--select", name: "sort", value: this.state.sort, onChange: function onChange(event) {
+	                return _this3.onChangeSort(event);
+	              } },
+	            sortOption
+	          ),
+	          _react2.default.createElement(
+	            "select",
+	            { className: "list--action--select", name: "filter", value: this.state.filter, onChange: function onChange(event) {
+	                return _this3.onChangeFilter(event);
+	              } },
+	            filterOption
+	          )
 	        ),
 	        _react2.default.createElement(
 	          "ul",

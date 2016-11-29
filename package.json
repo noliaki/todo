@@ -6,11 +6,11 @@
     "build": "run-s clean pug stylus webpack",
     "watch": "run-p watch:* browser-sync",
     "watch:pug": "pug -w src/index.pug -o dist",
-    "watch:stylus": "stylus -w ./src/css/style.styl -o ./dist/css",
+    "watch:stylus": "stylus -u autoprefixer-stylus -w ./src/css/style.styl -o ./dist/css",
     "watch:webpack": "webpack --config ./webpack.config.dev.js",
     "pug": "pug src/index.pug -o dist",
     "browser-sync": "browser-sync start --config bs-config.js",
-    "stylus": "stylus ./src/css/style.styl -o ./dist/css"
+    "stylus": "stylus -u autoprefixer-stylus -c ./src/css/style.styl -o ./dist/css"
   },
   "dependencies": {
     "babel-core": "^6.17.0",

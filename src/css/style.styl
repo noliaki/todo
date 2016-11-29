@@ -84,7 +84,9 @@ a
     text-decoration: line-through;
     color: lighten(color-base, 70%)
 
-
+  &.is-deleted
+    background-color: color-done
+    color: lighten(color-base, 70%)
 
 .list--done-toggle
   cursor: pointer;
@@ -132,3 +134,18 @@ a
   color color-accent
   &:hover
     color lighten(color-accent, 50%)
+
+.list--action
+  margin: 0 0 10px
+
+.list--action--select
+  display: inline-block;
+  color color-base
+  padding: 7px 10px
+  width: 150px
+  height: 2rem
+  margin-right: 10px
+  font-size 1rem
+  border: 1px solid color-border
+  &:focus
+    background-color: color-white

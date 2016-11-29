@@ -9,7 +9,7 @@ export default class Task extends React.Component {
 
     this.state = {
       newTask: null,
-      sort: '',
+      sort: 'newer',
       sortOption: [
         '',
         'newer',
@@ -112,14 +112,14 @@ export default class Task extends React.Component {
       case 'deleted' :
         return task.deleteDate
       default:
-        return true
+        return !task.deleteDate
     }
   }
 
   filteredData () {
     if ( !this.props.searchText ) return this.sortedTasks().filter(task => this.filterTask(task))
 
-    return this.sortedTasks().filter(task => filterTask(task)).filter((task) => {
+    return this.sortedTasks().filter(task => this.filterTask(task)).filter((task) => {
       return (task.name.indexOf(this.props.searchText) > -1 || task.description.indexOf(this.props.searchText) > -1) && !task.deleteDate
     })
   }
@@ -144,7 +144,8 @@ export default class Task extends React.Component {
         'list',
         `list_${index}`,
         `${(index + 1) % 2 === 0? 'even' : ''}`,
-        `${task.done ? 'is-done' : ''}`
+        `${task.done ? 'is-done' : ''}`,
+        `${task.deleteDate ? 'is-deleted' : ''}`
       ]
 
       return (
@@ -239,12 +240,14 @@ export default class Task extends React.Component {
         <div className='new-container'>
           { newTaskDom }
         </div>
-        <select name='sort' value={ this.state.sort } onChange={ (event) => this.onChangeSort(event) }>
-          { sortOption }
-        </select>
-        <select name='filter' value={ this.state.filter } onChange={ (event) => this.onChangeFilter(event) }>
-          { filterOption }
-        </select>
+        <div className='list--action'>
+          <select className='list--action--select' name='sort' value={ this.state.sort } onChange={ (event) => this.onChangeSort(event) }>
+            { sortOption }
+          </select>
+          <select className='list--action--select' name='filter' value={ this.state.filter } onChange={ (event) => this.onChangeFilter(event) }>
+            { filterOption }
+          </select>
+        </div>
         <ul className='list-container'>
           {task}
         </ul>

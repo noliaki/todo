@@ -326,8 +326,12 @@ a:hover {
   border: 1px solid #e4e9eb;
 }
 .list {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   padding: 7px 14px;
   background-color: #fff;
   border-top: 1px solid #c9d3d7;
@@ -344,6 +348,10 @@ a:hover {
 .list.is-done {
   background-color: #f5f8f8;
   text-decoration: line-through;
+  color: #b4c5d6;
+}
+.list.is-deleted {
+  background-color: #f5f8f8;
   color: #b4c5d6;
 }
 .list--done-toggle {
@@ -394,4 +402,20 @@ a:hover {
 }
 .list--delete:hover {
   color: #f3a69e;
+}
+.list--action {
+  margin: 0 0 10px;
+}
+.list--action--select {
+  display: inline-block;
+  color: #2c3e50;
+  padding: 7px 10px;
+  width: 150px;
+  height: 2rem;
+  margin-right: 10px;
+  font-size: 1rem;
+  border: 1px solid #e4e9eb;
+}
+.list--action--select:focus {
+  background-color: #fff;
 }
