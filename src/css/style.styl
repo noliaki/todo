@@ -1,0 +1,172 @@
+@import "_reset"
+@import "_utils"
+
+size-content = 900px;
+
+color-gray = #ECF0F1;
+color-white = #fff;
+color-base = #2C3E50;
+color-blue = #3498DB;
+color-accent = #E74C3C;
+color-border = darken(color-gray, 3%);
+color-border-darken = darken(color-border, 10%);
+color-done = lighten(color-gray, 50%);
+color-done-even = lighten(color-gray, 40%);
+
+border-radius = 5px
+
+body
+  font-size: 16px;
+  background-color: color-white
+  color: color-base
+
+input
+  color: color-base
+
+a
+  color: color-blue
+  text-decoration: none
+
+  &:hover
+    color: lighten(color-blue, 30%)
+
+.btn
+  display: inline-block
+  padding: 0.3em 0.7em
+  border: 1px solid color-border
+  border-radius: border-radius
+
+.btn-add
+  color: color-white
+  border-color: darken(color-blue, 10%)
+  background-color: color-blue
+  &:hover
+    color: color-white
+    background-color: lighten(color-blue, 10%)
+
+  &.is-disabled
+    opacity: 0.4
+    pointer-events: none
+
+.btn-cancel
+  color darken(color-gray, 50%)
+  &:hover
+    color darken(color-gray, 30%)
+
+#todo
+  width: 80%;
+  max-width: size-content;
+  margin: auto;
+
+.list-container
+  min-height: 3em;
+  border-radius: border-radius;
+  overflow: hidden;
+  border: 1px solid color-border
+
+.list
+  display: flex;
+  align-items: center;
+  padding: 7px 14px;
+  background-color: color-white;
+  border-top: 1px solid color-border-darken
+
+  &:first-child
+    border-top: none;
+
+  &.even
+    background-color: darken(color-white, 1%);
+    &.is-done
+      background-color: color-done-even
+
+  &.is-done
+    background-color: color-done
+    text-decoration: line-through;
+    color: lighten(color-base, 70%)
+
+  &.is-deleted
+    background-color: color-done
+    color: lighten(color-base, 70%)
+
+.list--done-toggle
+  cursor: pointer;
+  margin-right: 20px;
+  width: 25px;
+  height: 25px;
+  border: 1px solid color-border
+  line-height: 0
+  font-size: 1.5rem;
+  color: color-blue
+
+.list--title
+  font-size: 1.2rem;
+
+.list--date
+  font-size: 0.7rem;
+
+.new-container
+  margin: 20px 0
+
+.new-task--input
+.new-task--textarea
+  width: 100%
+  border: 1px solid color-border
+  border-radius: border-radius
+  padding 0.7rem 1rem
+  background-color lighten(color-gray, 30%)
+  outline none
+  &:focus
+    border-color color-blue
+    background-color color-white
+    box-shadow 0 0 3px 0 color-blue
+
+
+.new-task--input
+  font-size 1.2rem
+
+.new-task--textarea
+  font-size 1rem
+  min-height 5em
+  max-width 100%
+
+.list--delete
+  margin 0 0 0 auto
+  color color-accent
+  &:hover
+    color lighten(color-accent, 50%)
+
+.list--action
+  display: flex
+
+.list--action--select
+  display: inline-block;
+  color color-base
+  padding: 7px 10px
+  width: 150px
+  height: 2rem
+  margin-right: 10px
+  font-size 1rem
+  border: 1px solid color-border
+  border-radius: 0 border-radius border-radius 0
+  appearance: none
+  &:focus
+    background-color: color-white
+
+.list-seek
+  display: flex
+  margin: 0 0 10px
+
+.list-seek--input
+  font-size: 1rem
+  padding 0.4rem 0.7rem
+  border: 1px solid color-border
+  border-radius: 0 border-radius border-radius 0
+
+.form-tag
+  display: flex
+  // color: color-white
+  padding: 0 8px
+  align-items: center
+  border: 1px solid color-border
+  background: color-gray
+  border-radius: border-radius 0 0 border-radius
