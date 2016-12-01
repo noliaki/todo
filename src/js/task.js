@@ -1,5 +1,6 @@
 import React from "react"
 import ReactDOM from "react-dom"
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
 import {weekday} from './utils'
 
@@ -12,16 +13,15 @@ export default class Task extends React.Component {
       seekWord: '',
       sort: 'newer',
       sortOption: [
-        '',
+        'no sort',
         'newer',
         'older'
       ],
-      filter: '',
+      filter: 'no filter',
       filterOption: [
-        '',
+        'no filter',
         'active',
-        'done',
-        'deleted'
+        'done'
       ]
     }
   }
@@ -52,7 +52,6 @@ export default class Task extends React.Component {
         description: '',
         createDate: date.getTime(),
         editDate: date.getTime(),
-        deleteDate: null,
         done: false,
         projects: []
       }
@@ -113,13 +112,11 @@ export default class Task extends React.Component {
   filterTask (task) {
     switch (this.state.filter) {
       case 'active' :
-        return !task.deleteDate && !task.done
+        return !task.done
       case 'done' :
         return task.done
-      case 'deleted' :
-        return task.deleteDate
       default:
-        return !task.deleteDate
+        return task
     }
   }
 
@@ -127,10 +124,16 @@ export default class Task extends React.Component {
     return this.sortedTasks().filter(task => this.filterTask(task))
   }
 
-  filteredData () {
-    if ( !this.state.seekWord ) return this.defaultOrderedTasks()
+  defaultFilteredTasks () {
+    return this.props.tasks.filter(task => task).sort((a, b) => {
+      return b.createDate - a.createDate
+    })
+  }
 
-    return this.defaultOrderedTasks().filter((task) => {
+  filteredData () {
+    if ( !this.state.seekWord ) return this.defaultFilteredTasks().filter(task => this.filterTask(task))
+
+    return this.defaultFilteredTasks().filter((task) => {
       return (task.name.indexOf(this.state.seekWord) > -1 || task.description.indexOf(this.state.seekWord) > -1)
     })
   }
@@ -155,36 +158,34 @@ export default class Task extends React.Component {
         'list',
         `list_${index}`,
         `${(index + 1) % 2 === 0? 'even' : ''}`,
-        `${task.done ? 'is-done' : ''}`,
-        `${task.deleteDate ? 'is-deleted' : ''}`
+        `${task.done ? 'is-done' : ''}`
       ]
 
+      const deleteBtn = (
+        <a href='#delete-task' className='list--delete' onClick={(event) => this.props.onDeleteTask(task.id)} >
+          <i className="fa fa-times" aria-hidden="true"></i>
+        </a>
+      )
+
       return (
-        <li
-          className={listClass.filter(item => item).join(' ')}
-          key={task.id}
-        >
-          <div
-            className='list--done-toggle'
-            onClick={() => this.props.onDoneTask(task.id)}
-          >
-            { task.done ? <i className='fa fa-check' aria-hidden='true'></i> : '' }
-          </div>
-          <div className='list--content'>
-            <h2 className='list--title'>
-              {task.name}
-            </h2>
-            <div className='list--date'>
-              {`${createDate.getFullYear()}/${createDate.getMonth() + 1}/${createDate.getDate()} (${weekday[createDate.getDay()]})`}
-              {task.createDate !== task.editDate ? ` | ${editDate.getFullYear()}/${editDate.getMonth() + 1}/${editDate.getDate()} (${weekday[editDate.getDay()]})` : ''}
+          <li className={listClass.filter(item => item).join(' ')} key={task.id}>
+
+            <div className='list--done-toggle' onClick={() => this.props.onDoneTask(task.id)}>
+              { task.done ? <i className='fa fa-check' aria-hidden='true'></i> : '' }
             </div>
-            <p className='list--description'>
-              {task.description}
-            </p>
-          </div>
-          <a href='#delete-task' className='list--delete' onClick={(event) => this.props.onDeleteTask(task.id)} >
-            <i className="fa fa-times" aria-hidden="true"></i>
-          </a>
+            <div className='list--content'>
+              <div className='list--date'>
+                {`${createDate.getFullYear()}/${createDate.getMonth() + 1}/${createDate.getDate()} (${weekday[createDate.getDay()]})`}
+                {task.createDate !== task.editDate ? ` | ${editDate.getFullYear()}/${editDate.getMonth() + 1}/${editDate.getDate()} (${weekday[editDate.getDay()]})` : ''}
+              </div>
+              <h2 className='list--title'>
+                {task.name}
+              </h2>
+              <p className='list--description'>
+                {task.description}
+              </p>
+            </div>
+            { task.done ? deleteBtn : ''}
         </li>
       )
     })
@@ -269,9 +270,14 @@ export default class Task extends React.Component {
             <input className='list-seek--input' type='input' value={this.state.seekWord} onInput={(event) => this.onInputSeekWord(event)} />
           </div>
         </div>
-        <ul className='list-container'>
+        <ReactCSSTransitionGroup
+          component="ul"
+          className='list-container'
+          transitionName="list"
+          transitionEnterTimeout={200}
+          transitionLeaveTimeout={500}>
           {task}
-        </ul>
+        </ReactCSSTransitionGroup>
       </div>
     )
   }

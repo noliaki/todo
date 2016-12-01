@@ -25,6 +25,7 @@
     "pug": "^2.0.0-beta6",
     "pug-cli": "^1.0.0-alpha6",
     "react": "^15.3.2",
+    "react-addons-css-transition-group": "^15.4.1",
     "react-dom": "^15.3.2",
     "stylus": "^0.54.5",
     "webpack": "^1.13.2",
