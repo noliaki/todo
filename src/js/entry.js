@@ -23,7 +23,7 @@ class TodoApp extends React.Component {
       return
     }
     this.setState({
-      tasks: tasks
+      tasks
     })
   }
 
@@ -32,7 +32,7 @@ class TodoApp extends React.Component {
   }
 
   addNewTask (newTask) {
-    this.state.tasks.push(newTask)
+    const tasks = this.state.tasks.push(newTask)
     this.save()
   }
 
@@ -54,9 +54,8 @@ class TodoApp extends React.Component {
   }
 
   onDeleteTask (id) {
-    const tasks = this.state.tasks.map(task => (!task || task.id === id) ? null : task)
     this.setState({
-      tasks
+      tasks: this.state.tasks.filter(task => task.id !== id)
     })
     this.save()
   }

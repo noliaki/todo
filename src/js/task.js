@@ -1,6 +1,7 @@
 import React from "react"
 import ReactDOM from "react-dom"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+import _ from 'lodash'
 
 import {weekday} from './utils'
 
@@ -13,7 +14,6 @@ export default class Task extends React.Component {
       seekWord: '',
       sort: 'newer',
       sortOption: [
-        'no sort',
         'newer',
         'older'
       ],
@@ -41,13 +41,18 @@ export default class Task extends React.Component {
     })
   }
 
+  noTask () {
+    return !this.props.tasks.length
+  }
+
   insertNewTask (event) {
     event.preventDefault()
     const date = new Date()
+    const id = this.noTask() ? 0 : _.last(this.props.tasks).id + 1
 
     this.setState({
       newTask: {
-        id: this.props.tasks.length,
+        id,
         name: '',
         description: '',
         createDate: date.getTime(),
@@ -86,15 +91,11 @@ export default class Task extends React.Component {
 
   // sort
   newerTasks () {
-    return this.props.tasks.sort((a, b) => {
-      return b.createDate - a.createDate
-    })
+    return _.sortBy(this.props.tasks, task => -task.createDate)
   }
 
   olderTasks () {
-    return this.props.tasks.sort((a, b) => {
-      return a.createDate - b.createDate
-    })
+    return _.sortBy(this.props.tasks, 'createDate')
   }
 
 
@@ -120,20 +121,12 @@ export default class Task extends React.Component {
     }
   }
 
-  defaultOrderedTasks () {
-    return this.sortedTasks().filter(task => this.filterTask(task))
-  }
-
-  defaultFilteredTasks () {
-    return this.props.tasks.filter(task => task).sort((a, b) => {
-      return b.createDate - a.createDate
-    })
-  }
-
   filteredData () {
-    if ( !this.state.seekWord ) return this.defaultFilteredTasks().filter(task => this.filterTask(task))
+    if ( !this.state.seekWord ) {
+      return this.sortedTasks().filter(task => this.filterTask(task))
+    }
 
-    return this.defaultFilteredTasks().filter((task) => {
+    return this.sortedTasks().filter(task => this.filterTask(task)).filter((task) => {
       return (task.name.indexOf(this.state.seekWord) > -1 || task.description.indexOf(this.state.seekWord) > -1)
     })
   }
@@ -169,7 +162,6 @@ export default class Task extends React.Component {
 
       return (
           <li className={listClass.filter(item => item).join(' ')} key={task.id}>
-
             <div className='list--done-toggle' onClick={() => this.props.onDoneTask(task.id)}>
               { task.done ? <i className='fa fa-check' aria-hidden='true'></i> : '' }
             </div>
@@ -253,20 +245,26 @@ export default class Task extends React.Component {
           { newTaskDom }
         </div>
         <div className='list--action'>
-          <div className='list-seek'>
-            <span className='form-tag'>sort</span>
+          <div className='list-seek list--action--item'>
+            <span className='form-tag'>
+              <i className="fa fa-sort" aria-hidden="true"></i>
+            </span>
             <select className='list--action--select' name='sort' value={ this.state.sort } onChange={ (event) => this.onChangeSort(event) }>
               { sortOption }
             </select>
           </div>
-          <div className='list-seek'>
-            <span className='form-tag'>filter</span>
+          <div className='list-seek list--action--item'>
+            <span className='form-tag'>
+              <i className="fa fa-filter" aria-hidden="true"></i>
+            </span>
             <select className='list--action--select' name='filter' value={ this.state.filter } onChange={ (event) => this.onChangeFilter(event) }>
               { filterOption }
             </select>
           </div>
-          <div className='list-seek'>
-            <span className='form-tag'>seek word</span>
+          <div className='list-seek list--action--item'>
+            <span className='form-tag'>
+              <i className="fa fa-search" aria-hidden="true"></i>
+            </span>
             <input className='list-seek--input' type='input' value={this.state.seekWord} onInput={(event) => this.onInputSeekWord(event)} />
           </div>
         </div>
