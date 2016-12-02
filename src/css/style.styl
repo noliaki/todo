@@ -17,6 +17,7 @@ border-radius = 5px
 
 body
   font-size: 16px;
+  font-family: sans-serif
   background-color: color-white
   color: color-base
 
@@ -54,7 +55,7 @@ a
     color darken(color-gray, 30%)
 
 #todo
-  width: 80%;
+  padding 0 15px
   max-width: size-content;
   margin: auto;
 
@@ -70,6 +71,8 @@ a
   padding: 7px 14px;
   background-color: color-white;
   border-top: 1px solid color-border-darken
+  max-height 400px
+  transition all 0.2s ease-out
 
   &:first-child
     border-top: none;
@@ -137,20 +140,23 @@ a
 
 .list--action
   display: flex
+  flex-wrap wrap
 
 .list--action--select
-  display: inline-block;
+  position relative
   color color-base
   padding: 7px 10px
   width: 150px
-  height: 2rem
   margin-right: 10px
   font-size 1rem
   border: 1px solid color-border
   border-radius: 0 border-radius border-radius 0
   appearance: none
+  outline none
   &:focus
-    background-color: color-white
+    border-color color-blue
+    background-color color-white
+    box-shadow 0 0 3px 0 color-blue
 
 .list-seek
   display: flex
@@ -161,7 +167,11 @@ a
   padding 0.4rem 0.7rem
   border: 1px solid color-border
   border-radius: 0 border-radius border-radius 0
-
+  outline none
+  &:focus
+    border-color color-blue
+    background-color color-white
+    box-shadow 0 0 3px 0 color-blue
 .form-tag
   display: flex
   // color: color-white
@@ -170,3 +180,25 @@ a
   border: 1px solid color-border
   background: color-gray
   border-radius: border-radius 0 0 border-radius
+
+
+.list-enter
+  transform scale(0.7, 0.7)
+  opacity 0
+.list-enter.list-enter-active
+  transform scale(1, 1)
+  opacity 1
+.list-leave
+  transition-duration 0.5s
+  transition-timing-function ease-in-out
+  overflow hidden
+  max-height 0
+  padding 0
+  opacity 0
+  transform scale(0.9, 0.9)
+.list-leave.list-leave-active
+  // opacity 0
+  // transform scale(0.7, 0.7)
+
+.list--action--item
+  display flex

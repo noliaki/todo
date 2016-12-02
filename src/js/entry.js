@@ -19,11 +19,11 @@ class TodoApp extends React.Component {
 
   componentDidMount () {
     const tasks = JSON.parse(window.localStorage.getItem(storageName))
-    if (!tasks.length) {
+    if (!tasks || !tasks.length) {
       return
     }
     this.setState({
-      tasks: tasks
+      tasks
     })
   }
 
@@ -32,7 +32,7 @@ class TodoApp extends React.Component {
   }
 
   addNewTask (newTask) {
-    this.state.tasks.push(newTask)
+    const tasks = this.state.tasks.push(newTask)
     this.save()
   }
 
@@ -45,7 +45,7 @@ class TodoApp extends React.Component {
 
   onDoneTask (id) {
     const tasks = this.state.tasks
-    const targetTask = tasks.find(task => task.id === id)
+    const targetTask = tasks.find(task => task && task.id === id)
     targetTask.done = !targetTask.done
     this.setState({
       tasks
@@ -54,11 +54,8 @@ class TodoApp extends React.Component {
   }
 
   onDeleteTask (id) {
-    const tasks = this.state.tasks
-    const targetTask = tasks.find(task => task.id === id)
-    targetTask.deleteDate = new Date().getTime()
     this.setState({
-      tasks
+      tasks: this.state.tasks.filter(task => task.id !== id)
     })
     this.save()
   }
