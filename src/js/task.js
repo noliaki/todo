@@ -71,18 +71,18 @@ export default class Task extends React.Component {
     })
   }
 
-  onInputNewTaskName (event) {
+  onInputNewTaskName (taskName) {
     this.setState({
       newTask: Object.assign(this.state.newTask, {
-        name: event.target.value
+        name: taskName
       })
     })
   }
 
-  onInputNewTaskDescription (event) {
+  onInputNewTaskDescription (taskDescription) {
     this.setState({
       newTask: Object.assign(this.state.newTask, {
-        description: event.target.value
+        description: taskDescription
       })
     })
   }
@@ -154,7 +154,8 @@ export default class Task extends React.Component {
     const taskForm = <TaskForm
         newTask = {this.state.newTask}
         onInputNewTaskName = {(taskName) => this.onInputNewTaskName(taskName)}
-        onInputNewTaskDescription = {(taskDescription) => this.onInputNewTaskDescription(taskDescription)}/>
+        onInputNewTaskDescription = {(taskDescription) => this.onInputNewTaskDescription(taskDescription)}
+        projects = { this.props.projects }/>
 
     return (
       <div className='todo-tasks'>
@@ -193,7 +194,7 @@ export default class Task extends React.Component {
           transitionName="list"
           transitionEnterTimeout={200}
           transitionLeaveTimeout={500}>
-          { this.filteredData().map((task, index) => <TaskList key = {task.id} task = {task} index = {index} deleteTask = {(taskId) => this.props.onDeleteTask(taskId)} />) }
+          { this.filteredData().map((task, index) => <TaskList key = {task.id} task = {task} index = {index} deleteTask = {(taskId) => this.props.onDeleteTask(taskId)} onDoneTask = {() => this.onDoneTask()} />) }
         </ReactCSSTransitionGroup>
       </div>
     )

@@ -86,20 +86,21 @@ class TodoApp extends React.Component {
     return (
       <div id='todo'>
         <div id='task'>
-          <Task tasks = { this.state.tasks }
+          <Task
+            tasks = { this.state.tasks }
             searchText = { this.state.searchText }
             addNewTask = { (newTask) => this.addNewTask(newTask) }
             onDoneTask = { (id) => this.onDoneTask(id) }
             onDeleteTask = { (id) => this.onDeleteTask(id) }
-          />
+            projects = { this.state.projects } />
         </div>
         <div id='project'>
-          <Project projects = { this.state.projects }
+          <Project
+            projects = { this.state.projects }
             searchText = { this.state.searchText }
             addNewProject = { (newTask) => this.addNewProject(newTask) }
             onDoneProject = { (id) => this.onDoneProject(id) }
-            onDeleteProject = { (id) => this.onDeleteProject(id) }
-          />
+            onDeleteProject = { (id) => this.onDeleteProject(id) } />
         </div>
       </div>
     )

@@ -188,7 +188,8 @@
 	        _react2.default.createElement(
 	          'div',
 	          { id: 'task' },
-	          _react2.default.createElement(_task2.default, { tasks: this.state.tasks,
+	          _react2.default.createElement(_task2.default, {
+	            tasks: this.state.tasks,
 	            searchText: this.state.searchText,
 	            addNewTask: function addNewTask(newTask) {
 	              return _this2.addNewTask(newTask);
@@ -198,13 +199,14 @@
 	            },
 	            onDeleteTask: function onDeleteTask(id) {
 	              return _this2.onDeleteTask(id);
-	            }
-	          })
+	            },
+	            projects: this.state.projects })
 	        ),
 	        _react2.default.createElement(
 	          'div',
 	          { id: 'project' },
-	          _react2.default.createElement(_project2.default, { projects: this.state.projects,
+	          _react2.default.createElement(_project2.default, {
+	            projects: this.state.projects,
 	            searchText: this.state.searchText,
 	            addNewProject: function addNewProject(newTask) {
 	              return _this2.addNewProject(newTask);
@@ -214,8 +216,7 @@
 	            },
 	            onDeleteProject: function onDeleteProject(id) {
 	              return _this2.onDeleteProject(id);
-	            }
-	          })
+	            } })
 	        )
 	      );
 	    }
@@ -40079,6 +40080,13 @@
 	    value: function render() {
 	      var _this2 = this;
 	
+	      var projects = this.props.projects.map(function (project) {
+	        return _react2.default.createElement(
+	          "option",
+	          { key: "project-" + project.id, id: "project-" + project.id, name: "project", value: project.id },
+	          project.name
+	        );
+	      });
 	      return _react2.default.createElement(
 	        "div",
 	        { className: "new-task" },
@@ -40102,6 +40110,15 @@
 	            },
 	            value: this.props.newTask.description,
 	            placeholder: "leave a comment" })
+	        ),
+	        _react2.default.createElement(
+	          "div",
+	          null,
+	          _react2.default.createElement(
+	            "select",
+	            { htmlFor: "project-" + project.id },
+	            projects
+	          )
 	        )
 	      );
 	    }
@@ -40229,19 +40246,19 @@
 	    }
 	  }, {
 	    key: "onInputNewTaskName",
-	    value: function onInputNewTaskName(event) {
+	    value: function onInputNewTaskName(taskName) {
 	      this.setState({
 	        newTask: Object.assign(this.state.newTask, {
-	          name: event.target.value
+	          name: taskName
 	        })
 	      });
 	    }
 	  }, {
 	    key: "onInputNewTaskDescription",
-	    value: function onInputNewTaskDescription(event) {
+	    value: function onInputNewTaskDescription(taskDescription) {
 	      this.setState({
 	        newTask: Object.assign(this.state.newTask, {
-	          description: event.target.value
+	          description: taskDescription
 	        })
 	      });
 	    }
@@ -40337,7 +40354,8 @@
 	        },
 	        onInputNewTaskDescription: function onInputNewTaskDescription(taskDescription) {
 	          return _this3.onInputNewTaskDescription(taskDescription);
-	        } });
+	        },
+	        projects: this.props.projects });
 	
 	      return _react2.default.createElement(
 	        "div",
@@ -40395,6 +40413,8 @@
 	          this.filteredData().map(function (task, index) {
 	            return _react2.default.createElement(_taskList2.default, { key: task.id, task: task, index: index, deleteTask: function deleteTask(taskId) {
 	                return _this3.props.onDeleteTask(taskId);
+	              }, onDoneTask: function onDoneTask() {
+	                return _this3.onDoneTask();
 	              } });
 	          })
 	        )

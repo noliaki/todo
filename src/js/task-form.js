@@ -7,6 +7,9 @@ export default class TaskForm extends React.Component {
   }
 
   render () {
+    const projects = this.props.projects.map( project => {
+      return <option key={`project-${project.id}`} id={`project-${project.id}`} name='project' value={project.id}>{project.name}</option>
+    })
     return (
       <div className='new-task'>
         <div className='new-task--name'>
@@ -21,6 +24,11 @@ export default class TaskForm extends React.Component {
             onInput = {event => this.props.onInputNewTaskDescription(event.currentTarget.value)}
             value={this.props.newTask.description}
             placeholder='leave a comment' />
+        </div>
+        <div>
+          <select htmlFor={`project-${project.id}`}>
+            {projects}
+          </select>
         </div>
       </div>
     )
