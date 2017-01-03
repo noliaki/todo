@@ -7,61 +7,73 @@ import TaskList from './task-list'
 import TaskAction from './task-action'
 import TaskForm from './task-form'
 
-export default class Task extends React.Component {
+class Item {
+  constructor ({ id, name, description, createDate, editDate, done = false, refs = [] } = {}) {
+    this.id = id
+    this.name = name
+    this.description = description
+    this.createDate = createDate
+    this.editDate = editDate
+    this.done = done
+    this.refs = refs
+  }
+}
+
+export default class ItemComponent extends React.Component {
   constructor (props) {
     super (props)
 
     this.state = {
-      newTask: null,
-      seekWord: '',
-      sort: 'newer',
-      sortOption: [
-        'newer',
-        'older'
-      ],
-      filter: 'no filter',
-      filterOption: [
-        'no filter',
-        'active',
-        'done'
-      ]
+      newItem: null
     }
+
+    // this.state = {
+    //   newItem: null,
+    //   seekWord: '',
+    //   sort: 'newer',
+    //   sortOption: [
+    //     'newer',
+    //     'older'
+    //   ],
+    //   filter: 'no filter',
+    //   filterOption: [
+    //     'no filter',
+    //     'active',
+    //     'done'
+    //   ]
+    // }
   }
 
-  addNewTask (event) {
+  addNewItem (event) {
     event.preventDefault()
-    this.props.addNewTask(this.state.newTask)
+    this.props.addNewItem(this.state.newItem)
     this.setState({
-      newTask: null
+      newItem: null
     })
   }
 
-  cancelNewTask (event) {
+  cancelNewItem (event) {
     event.preventDefault()
     this.setState({
-      newTask: null
+      newItem: null
     })
   }
 
-  noTask () {
-    return !this.props.projects.length
+  noItem () {
+    return !this.props.items.length
   }
 
   createNewTask (event) {
     event.preventDefault()
     const date = new Date()
-    const id = this.noTask() ? 0 : _.last(this.props.projects).id + 1
+    const id = this.noItem() ? 0 : _.last(this.props.items).id + 1
 
     this.setState({
-      newTask: {
-        id,
-        name: '',
-        description: '',
-        createDate: date.getTime(),
-        editDate: date.getTime(),
-        done: false,
-        projects: []
-      }
+      newItem: new Item({
+        id          : id,
+        createDate  : date.getTime(),
+        editDate    : date.getTime()
+      })
     })
   }
 
@@ -71,9 +83,9 @@ export default class Task extends React.Component {
     })
   }
 
-  onInputNewTaskName (event) {
+  onInputNewItemName (event) {
     this.setState({
-      newTask: Object.assign(this.state.newTask, {
+      newItem: Object.assign(this.state.newItem, {
         name: event.target.value
       })
     })
@@ -81,7 +93,7 @@ export default class Task extends React.Component {
 
   onInputNewTaskDescription (event) {
     this.setState({
-      newTask: Object.assign(this.state.newTask, {
+      newItem: Object.assign(this.state.newItem, {
         description: event.target.value
       })
     })
@@ -92,16 +104,16 @@ export default class Task extends React.Component {
   }
 
   canAddNewTask () {
-    return this.state.newTask && this.state.newTask.name
+    return this.state.newItem && this.state.newItem.name
   }
 
   // sort
   newerTasks () {
-    return _.sortBy(this.props.projects, task => -task.createDate)
+    return _.sortBy(this.props.items, task => -task.createDate)
   }
 
   olderTasks () {
-    return _.sortBy(this.props.projects, 'createDate')
+    return _.sortBy(this.props.items, 'createDate')
   }
 
 
@@ -152,14 +164,14 @@ export default class Task extends React.Component {
   render () {
 
     const taskForm = <TaskForm
-        newTask = {this.state.newTask}
+        newItem = {this.state.newItem}
         onInputNewTaskName = {(taskName) => this.onInputNewTaskName(taskName)}
         onInputNewTaskDescription = {(taskDescription) => this.onInputNewTaskDescription(taskDescription)}/>
 
     return (
       <div className='todo-tasks'>
         <div className='new-container'>
-          { this.state.newTask ? taskForm : '' }
+          { this.state.newItem ? taskForm : '' }
           <div className='new-task--action'>
             <a href='#add-new-task'
               className={`btn btn-add is-available`}
