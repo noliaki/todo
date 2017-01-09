@@ -13,6 +13,19 @@ export default class Store {
     this.projects.push(newProject)
   }
 
+  newProject () {
+    const date = new Date()
+
+    return {
+      id: '',
+      name: '',
+      description: '',
+      createDate: date.getTime(),
+      editDate: date.getTime(),
+      done: false
+    }
+  }
+
   doneProject (id) {
     this.projects.find( project => project.id === id ).done = true
   }
@@ -23,6 +36,20 @@ export default class Store {
 
   addTask (newTask) {
     this.tasks.push(newTask)
+  }
+
+  newTask () {
+    const date = new Date()
+
+    return {
+      id: '',
+      name: '',
+      description: '',
+      createDate: date.getTime(),
+      editDate: date.getTime(),
+      done: false,
+      projects: []
+    }
   }
 
   doneTask (id) {
