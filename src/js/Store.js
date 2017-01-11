@@ -1,6 +1,9 @@
+import dispatcher from './EventEmitter'
 
-export default class Store {
+export default class Store extends dispatcher {
   constructor () {
+    super()
+    
     this.projects = []
     this.tasks = []
   }
