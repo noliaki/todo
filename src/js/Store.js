@@ -1,11 +1,16 @@
 import dispatcher from './EventEmitter'
 
 export default class Store extends dispatcher {
-  constructor () {
+  constructor (dispatcher) {
     super()
-    
+
     this.projects = []
     this.tasks = []
+    this.newProject = null
+    this.newTask = null
+
+    dispatcher.on("createNewProject", this.createNewProject.bind(this))
+    dispatcher.on("createNewTask", this.createNewProject.bind(this))
   }
 
   getProjects () {
@@ -16,10 +21,10 @@ export default class Store extends dispatcher {
     this.projects.push(newProject)
   }
 
-  newProject () {
+  createNewProject () {
     const date = new Date()
 
-    return {
+    this.newProject = {
       id: '',
       name: '',
       description: '',
@@ -41,10 +46,10 @@ export default class Store extends dispatcher {
     this.tasks.push(newTask)
   }
 
-  newTask () {
+  createNewTask () {
     const date = new Date()
 
-    return {
+    this.newTask = {
       id: '',
       name: '',
       description: '',
