@@ -3,7 +3,10 @@ export default class ActionCreator {
     this.dispatcher = dispatcher;
   }
   // "Emit" event ----> Store
-  countUp(data) {
-    this.dispatcher.emit("countUp", data);
+  addNewProjext(data) {
+    this.dispatcher.emit("addNewProjext", data);
+  }
+  addNewTask(data) {
+    this.dispatcher.emit("addNewTask", data);
   }
 }
