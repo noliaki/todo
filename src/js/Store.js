@@ -11,13 +11,15 @@ export default class Store extends dispatcher {
 
     dispatcher.on("createNewProject", this.createNewProject.bind(this))
     dispatcher.on("createNewTask", this.createNewProject.bind(this))
+    dispatcher.on("addNewProject", this.addNewProject.bind(this))
+    dispatcher.on("addNewTask", this.addNewTask.bind(this))
   }
 
   getProjects () {
     return this.projects
   }
 
-  addProject (newProject) {
+  addNewProject (newProject) {
     this.projects.push(newProject)
   }
 
@@ -42,7 +44,7 @@ export default class Store extends dispatcher {
     return this.tasks
   }
 
-  addTask (newTask) {
+  addNewTask (newTask) {
     this.tasks.push(newTask)
   }
 
