@@ -23,17 +23,17 @@ export default class Store extends dispatcher {
     this.projects.push(newProject)
   }
 
-  createNewProject () {
+  createNewProject (newProject) {
     const date = new Date()
 
-    this.newProject = {
+    this.newProject = Object.assign({
       id: '',
       name: '',
       description: '',
       createDate: date.getTime(),
       editDate: date.getTime(),
       done: false
-    }
+    }, newProject)
   }
 
   doneProject (id) {
@@ -48,18 +48,17 @@ export default class Store extends dispatcher {
     this.tasks.push(newTask)
   }
 
-  createNewTask () {
+  createNewTask (newTask) {
     const date = new Date()
 
-    this.newTask = {
+    this.newTask = Object.assign({
       id: '',
       name: '',
       description: '',
       createDate: date.getTime(),
       editDate: date.getTime(),
-      done: false,
-      projects: []
-    }
+      done: false
+    }, newTask)
   }
 
   doneTask (id) {
