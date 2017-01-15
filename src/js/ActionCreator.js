@@ -9,4 +9,10 @@ export default class ActionCreator {
   addNewTask(data) {
     this.dispatcher.emit("addNewTask", data)
   }
+  createNewProject() {
+    this.dispatcher.emit("createNewProject")
+  }
+  createNewTask() {
+    this.dispatcher.emit("createNewTask")
+  }
 }
