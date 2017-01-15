@@ -21,6 +21,7 @@ export default class Store extends dispatcher {
 
   addNewProject (newProject) {
     this.projects.push(newProject)
+    this.emit('ADD_NEW_PROJECT')
   }
 
   createNewProject (newProject) {
@@ -34,10 +35,13 @@ export default class Store extends dispatcher {
       editDate: date.getTime(),
       done: false
     }, newProject)
+
+    this.emit('CREEATE_NEW_PROJECT')
   }
 
   doneProject (id) {
     this.projects.find( project => project.id === id ).done = true
+    this.emit('DONE_PROJECT')
   }
 
   getTasks () {
@@ -46,6 +50,7 @@ export default class Store extends dispatcher {
 
   addNewTask (newTask) {
     this.tasks.push(newTask)
+    this.emit('ADD_NEW_TASK')
   }
 
   createNewTask (newTask) {
@@ -59,9 +64,12 @@ export default class Store extends dispatcher {
       editDate: date.getTime(),
       done: false
     }, newTask)
+
+    this.emit('CREEATE_NEW_TASK')
   }
 
   doneTask (id) {
     this.tasks.find( task => task.id === id ).done = true
+    this.emit('DONE_TASK')
   }
 }
