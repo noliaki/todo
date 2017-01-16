@@ -1,6 +1,7 @@
-import dispatcher from './EventEmitter'
+import Dispatcher from './EventEmitter'
+import Action from './ActionCreator'
 
-export default class Store extends dispatcher {
+class Store extends Dispatcher {
   constructor (dispatcher) {
     super()
 
@@ -73,3 +74,8 @@ export default class Store extends dispatcher {
     this.emit('DONE_TASK')
   }
 }
+
+const dispatcher = new Dispatcher()
+
+export new Action(dispatcher)
+export new Store(dispatcher)
