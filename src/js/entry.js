@@ -5,7 +5,8 @@ import _ from 'lodash'
 
 import Project from './project'
 import Task from './task'
-import { projects, tasks } from './initial-state'
+
+import { Store } from './Store'
 
 const storageName = 'todo'
 
@@ -13,8 +14,8 @@ class TodoApp extends React.Component {
   constructor (props) {
     super (props)
     this.state = {
-      projects,
-      tasks,
+      projects: Store.getProjects(),
+      tasks: Store.getTasks(),
       searchText: ''
     }
   }
