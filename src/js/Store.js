@@ -77,5 +77,5 @@ class Store extends Dispatcher {
 
 const dispatcher = new Dispatcher()
 
-export new Action(dispatcher)
-export new Store(dispatcher)
+export const store = new Store(dispatcher)
+export const action = new Action(dispatcher)
