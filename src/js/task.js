@@ -2,6 +2,7 @@ import React from "react"
 import ReactDOM from "react-dom"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import _ from 'lodash'
+import { store, action } from './Store'
 
 import TaskList from './task-list'
 import TaskAction from './task-action'
