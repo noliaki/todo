@@ -2,18 +2,11 @@ import Dispatcher from './EventEmitter'
 import Action from './ActionCreator'
 
 class Store extends Dispatcher {
-  constructor (dispatcher) {
+  constructor () {
     super()
 
     this.projects = []
     this.tasks = []
-    this.newProject = null
-    this.newTask = null
-
-    dispatcher.on("createNewProject", this.createNewProject.bind(this))
-    dispatcher.on("createNewTask", this.createNewProject.bind(this))
-    dispatcher.on("addNewProject", this.addNewProject.bind(this))
-    dispatcher.on("addNewTask", this.addNewTask.bind(this))
   }
 
   getProjects () {
@@ -22,27 +15,23 @@ class Store extends Dispatcher {
 
   addNewProject (newProject) {
     this.projects.push(newProject)
-    this.emit('ADD_NEW_PROJECT')
   }
 
-  createNewProject (newProject) {
+  createNewProject () {
     const date = new Date()
 
-    this.newProject = Object.assign({
+    return {
       id: '',
       name: '',
       description: '',
       createDate: date.getTime(),
       editDate: date.getTime(),
       done: false
-    }, newProject)
-
-    this.emit('CREEATE_NEW_PROJECT')
+    }
   }
 
   doneProject (id) {
     this.projects.find( project => project.id === id ).done = true
-    this.emit('DONE_PROJECT')
   }
 
   getTasks () {
@@ -51,31 +40,24 @@ class Store extends Dispatcher {
 
   addNewTask (newTask) {
     this.tasks.push(newTask)
-    this.emit('ADD_NEW_TASK')
   }
 
   createNewTask (newTask) {
     const date = new Date()
 
-    this.newTask = Object.assign({
+    return {
       id: '',
       name: '',
       description: '',
       createDate: date.getTime(),
       editDate: date.getTime(),
       done: false
-    }, newTask)
-
-    this.emit('CREEATE_NEW_TASK')
+    }
   }
 
   doneTask (id) {
     this.tasks.find( task => task.id === id ).done = true
-    this.emit('DONE_TASK')
   }
 }
 
-const dispatcher = new Dispatcher()
-
-export const store = new Store(dispatcher)
-export const action = new Action(dispatcher)
+export default new Store()
