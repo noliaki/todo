@@ -1,5 +1,4 @@
 import Dispatcher from './EventEmitter'
-import Action from './ActionCreator'
 
 class Store extends Dispatcher {
   constructor () {
@@ -42,7 +41,7 @@ class Store extends Dispatcher {
     this.tasks.push(newTask)
   }
 
-  createNewTask (newTask) {
+  createNewTask () {
     const date = new Date()
 
     return {

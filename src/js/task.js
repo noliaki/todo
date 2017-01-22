@@ -2,7 +2,7 @@ import React from "react"
 import ReactDOM from "react-dom"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import _ from 'lodash'
-import { store, action } from './Store'
+import Store from './Store'
 
 import TaskList from './task-list'
 import TaskAction from './task-action'
@@ -12,7 +12,10 @@ export default class Task extends React.Component {
   constructor (props) {
     super (props)
 
+    Store.on('onChangeTasks', this.fetchTasks)
+
     this.state = {
+      tasks: Store.getTasks(),
       newTask: null,
       seekWord: '',
       sort: 'newer',
@@ -29,12 +32,15 @@ export default class Task extends React.Component {
     }
   }
 
+  fetchTasks () {
+    this.setState({
+      tasks: Store.getTasks()
+    })
+  }
+
   addNewTask (event) {
     event.preventDefault()
-    this.props.addNewTask(this.state.newTask)
-    this.setState({
-      newTask: null
-    })
+    Store.addNewTask(this.state.newTask)
   }
 
   cancelNewTask (event) {
@@ -50,20 +56,10 @@ export default class Task extends React.Component {
 
   createNewTask (event) {
     event.preventDefault()
-    const date = new Date()
-    const id = this.noTask() ? 0 : _.last(this.props.tasks).id + 1
+    const newTask = Store.createNewTask()
+    newTask.id = this.noTask() ? 0 : _.last(this.props.tasks).id + 1
 
-    this.setState({
-      newTask: {
-        id,
-        name: '',
-        description: '',
-        createDate: date.getTime(),
-        editDate: date.getTime(),
-        done: false,
-        projects: []
-      }
-    })
+    this.setState({ newTask })
   }
 
   onInputSeekWord (seekWord) {
