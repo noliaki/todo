@@ -41,6 +41,9 @@ export default class Task extends React.Component {
   addNewTask (event) {
     event.preventDefault()
     Store.addNewTask(this.state.newTask)
+    this.setState({
+      newTask: null
+    })
   }
 
   cancelNewTask (event) {
