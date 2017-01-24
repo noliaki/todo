@@ -16,6 +16,7 @@ export default class Task extends React.Component {
 
     this.state = {
       tasks: Store.getTasks(),
+      projects: Store.getProjects(),
       newTask: null,
       seekWord: '',
       sort: 'newer',
