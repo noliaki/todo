@@ -39,6 +39,7 @@ class Store extends Dispatcher {
 
   addNewTask (newTask) {
     this.tasks.push(newTask)
+    this.emit('onChangeTasks')
   }
 
   createNewTask () {
