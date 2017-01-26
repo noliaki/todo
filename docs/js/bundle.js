@@ -68,7 +68,9 @@
 	
 	var _task2 = _interopRequireDefault(_task);
 	
-	var _initialState = __webpack_require__(187);
+	var _Store = __webpack_require__(187);
+	
+	var _Store2 = _interopRequireDefault(_Store);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -90,8 +92,8 @@
 	    var _this = _possibleConstructorReturn(this, (TodoApp.__proto__ || Object.getPrototypeOf(TodoApp)).call(this, props));
 	
 	    _this.state = {
-	      projects: _initialState.projects,
-	      tasks: _initialState.tasks,
+	      projects: _Store2.default.getProjects(),
+	      tasks: _Store2.default.getTasks(),
 	      searchText: ''
 	    };
 	    return _this;
@@ -39833,6 +39835,10 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
+	var _Store = __webpack_require__(187);
+	
+	var _Store2 = _interopRequireDefault(_Store);
+	
 	var _utils = __webpack_require__(183);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -39856,7 +39862,7 @@
 	    key: "onDoneTask",
 	    value: function onDoneTask(event) {
 	      event.preventDefault();
-	      this.props.task.done = true;
+	      _Store2.default.doneTask(this.props.task.id);
 	    }
 	  }, {
 	    key: "render",
@@ -40157,6 +40163,10 @@
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
+	var _Store = __webpack_require__(187);
+	
+	var _Store2 = _interopRequireDefault(_Store);
+	
 	var _taskList = __webpack_require__(182);
 	
 	var _taskList2 = _interopRequireDefault(_taskList);
@@ -40185,7 +40195,11 @@
 	
 	    var _this = _possibleConstructorReturn(this, (Task.__proto__ || Object.getPrototypeOf(Task)).call(this, props));
 	
+	    _Store2.default.on('onChangeTasks', _this.fetchTasks);
+	
 	    _this.state = {
+	      tasks: _Store2.default.getTasks(),
+	      projects: _Store2.default.getProjects(),
 	      newTask: null,
 	      seekWord: '',
 	      sort: 'newer',
@@ -40197,10 +40211,17 @@
 	  }
 	
 	  _createClass(Task, [{
+	    key: "fetchTasks",
+	    value: function fetchTasks() {
+	      this.setState({
+	        tasks: _Store2.default.getTasks()
+	      });
+	    }
+	  }, {
 	    key: "addNewTask",
 	    value: function addNewTask(event) {
 	      event.preventDefault();
-	      this.props.addNewTask(this.state.newTask);
+	      _Store2.default.addNewTask(this.state.newTask);
 	      this.setState({
 	        newTask: null
 	      });
@@ -40222,20 +40243,10 @@
 	    key: "createNewTask",
 	    value: function createNewTask(event) {
 	      event.preventDefault();
-	      var date = new Date();
-	      var id = this.noTask() ? 0 : _lodash2.default.last(this.props.tasks).id + 1;
+	      var newTask = _Store2.default.createNewTask();
+	      newTask.id = this.noTask() ? 0 : _lodash2.default.last(this.props.tasks).id + 1;
 	
-	      this.setState({
-	        newTask: {
-	          id: id,
-	          name: '',
-	          description: '',
-	          createDate: date.getTime(),
-	          editDate: date.getTime(),
-	          done: false,
-	          projects: []
-	        }
-	      });
+	      this.setState({ newTask: newTask });
 	    }
 	  }, {
 	    key: "onInputSeekWord",
@@ -40429,50 +40440,157 @@
 
 /***/ },
 /* 187 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var projects = exports.projects = function () {
-	  var arr = [];
-	  for (var i = 0, len = 100; i < len; i++) {
-	    var date = new Date();
-	    arr.push({
-	      id: arr.length,
-	      name: "Project-" + arr.length,
-	      description: "fuga-" + arr.length,
-	      createDate: date,
-	      editDate: date,
-	      deleteDate: null,
-	      done: false,
-	      tasks: []
-	    });
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _EventEmitter = __webpack_require__(188);
+	
+	var _EventEmitter2 = _interopRequireDefault(_EventEmitter);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var Store = function (_Dispatcher) {
+	  _inherits(Store, _Dispatcher);
+	
+	  function Store() {
+	    _classCallCheck(this, Store);
+	
+	    var _this = _possibleConstructorReturn(this, (Store.__proto__ || Object.getPrototypeOf(Store)).call(this));
+	
+	    _this.projects = [];
+	    _this.tasks = [];
+	    return _this;
 	  }
 	
-	  return arr;
+	  _createClass(Store, [{
+	    key: 'getProjects',
+	    value: function getProjects() {
+	      return this.projects;
+	    }
+	  }, {
+	    key: 'addNewProject',
+	    value: function addNewProject(newProject) {
+	      this.projects.push(newProject);
+	    }
+	  }, {
+	    key: 'createNewProject',
+	    value: function createNewProject() {
+	      var date = new Date();
+	
+	      return {
+	        id: '',
+	        name: '',
+	        description: '',
+	        createDate: date.getTime(),
+	        editDate: date.getTime(),
+	        done: false
+	      };
+	    }
+	  }, {
+	    key: 'doneProject',
+	    value: function doneProject(id) {
+	      this.projects.find(function (project) {
+	        return project.id === id;
+	      }).done = true;
+	    }
+	  }, {
+	    key: 'getTasks',
+	    value: function getTasks() {
+	      return this.tasks;
+	    }
+	  }, {
+	    key: 'addNewTask',
+	    value: function addNewTask(newTask) {
+	      this.tasks.push(newTask);
+	      this.emit('onChangeTasks');
+	    }
+	  }, {
+	    key: 'createNewTask',
+	    value: function createNewTask() {
+	      var date = new Date();
+	
+	      return {
+	        id: '',
+	        name: '',
+	        description: '',
+	        createDate: date.getTime(),
+	        editDate: date.getTime(),
+	        done: false
+	      };
+	    }
+	  }, {
+	    key: 'doneTask',
+	    value: function doneTask(id) {
+	      this.tasks.find(function (task) {
+	        return task.id === id;
+	      }).done = true;
+	    }
+	  }]);
+	
+	  return Store;
+	}(_EventEmitter2.default);
+	
+	exports.default = new Store();
+
+/***/ },
+/* 188 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var EventEmitter = function () {
+	  function EventEmitter() {
+	    _classCallCheck(this, EventEmitter);
+	
+	    this._handlers = {};
+	  }
+	
+	  _createClass(EventEmitter, [{
+	    key: 'on',
+	    value: function on(type, handler) {
+	      if (typeof this._handlers[type] === 'undefined') {
+	        this._handlers[type] = [];
+	      }
+	      this._handlers[type].push(handler);
+	    }
+	  }, {
+	    key: 'emit',
+	    value: function emit(type, data) {
+	      var _this = this;
+	
+	      var handlers = this._handlers[type] || [];
+	
+	      handlers.forEach(function (handler) {
+	        handler.call(_this, data);
+	      });
+	    }
+	  }]);
+	
+	  return EventEmitter;
 	}();
 	
-	var tasks = exports.tasks = function () {
-	  var arr = [];
-	  // for (let i = 0, len = 100; i < len; i ++) {
-	  //   const date = new Date()
-	  //   arr.push({
-	  //     id: arr.length,
-	  //     name: `TASK-${arr.length}`,
-	  //     description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-	  //     createDate: date,
-	  //     editDate: date,
-	  //     deleteDate: null,
-	  //     done: false,
-	  //     project: null
-	  //   })
-	  // }
-	
-	  return arr;
-	}();
+	exports.default = EventEmitter;
 
 /***/ }
 /******/ ]);

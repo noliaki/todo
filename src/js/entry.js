@@ -6,7 +6,7 @@ import _ from 'lodash'
 import Project from './project'
 import Task from './task'
 
-import { Store } from './Store'
+import Store from './Store'
 
 const storageName = 'todo'
 

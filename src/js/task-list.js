@@ -1,5 +1,6 @@
 import React from "react"
 import ReactDOM from "react-dom"
+import Store from './Store'
 import { weekday } from './utils'
 
 export default class TaskList extends React.Component {
@@ -9,7 +10,7 @@ export default class TaskList extends React.Component {
 
   onDoneTask (event) {
     event.preventDefault()
-    this.props.task.done = true
+    Store.doneTask(this.props.task.id)
   }
 
   render () {
