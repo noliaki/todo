@@ -55,13 +55,13 @@ export default class Task extends React.Component {
   }
 
   noTask () {
-    return !this.props.tasks.length
+    return !this.state.tasks.length
   }
 
   createNewTask (event) {
     event.preventDefault()
     const newTask = Store.createNewTask()
-    newTask.id = this.noTask() ? 0 : _.last(this.props.tasks).id + 1
+    newTask.id = this.noTask() ? 0 : _.last(this.state.tasks).id + 1
 
     this.setState({ newTask })
   }
@@ -98,11 +98,11 @@ export default class Task extends React.Component {
 
   // sort
   newerTasks () {
-    return _.sortBy(this.props.tasks, task => -task.createDate)
+    return _.sortBy(this.state.tasks, task => -task.createDate)
   }
 
   olderTasks () {
-    return _.sortBy(this.props.tasks, 'createDate')
+    return _.sortBy(this.state.tasks, 'createDate')
   }
 
 
