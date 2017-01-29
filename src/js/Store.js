@@ -13,6 +13,9 @@ class Store extends Dispatcher {
   }
 
   addNewProject (newProject) {
+    newProject.id = Math.max(...(this.projects.map(project => {
+      return project.id
+    }))) + 1
     this.projects.push(newProject)
   }
 
@@ -38,6 +41,9 @@ class Store extends Dispatcher {
   }
 
   addNewTask (newTask) {
+    newTask.id = Math.max(...(this.tasks.map(task => {
+      return task.id
+    }))) + 1
     this.tasks.push(newTask)
     this.emit('onChangeTasks')
   }
