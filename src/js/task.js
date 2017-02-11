@@ -2,14 +2,21 @@ import React from "react"
 import ReactDOM from "react-dom"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import _ from 'lodash'
+import Store from './Store'
 
-import {weekday} from './utils'
+import TaskList from './task-list'
+import TaskAction from './task-action'
+import TaskForm from './task-form'
 
 export default class Task extends React.Component {
   constructor (props) {
     super (props)
 
+    Store.on('onChangeTasks', this.fetchTasks)
+
     this.state = {
+      tasks: Store.getTasks(),
+      projects: Store.getProjects(),
       newTask: null,
       seekWord: '',
       sort: 'newer',
@@ -26,9 +33,15 @@ export default class Task extends React.Component {
     }
   }
 
+  fetchTasks () {
+    this.setState({
+      tasks: Store.getTasks()
+    })
+  }
+
   addNewTask (event) {
     event.preventDefault()
-    this.props.addNewTask(this.state.newTask)
+    Store.addNewTask(this.state.newTask)
     this.setState({
       newTask: null
     })
@@ -42,60 +55,54 @@ export default class Task extends React.Component {
   }
 
   noTask () {
-    return !this.props.tasks.length
+    return !this.state.tasks.length
   }
 
-  insertNewTask (event) {
+  createNewTask (event) {
     event.preventDefault()
-    const date = new Date()
-    const id = this.noTask() ? 0 : _.last(this.props.tasks).id + 1
+    const newTask = Store.createNewTask()
+    newTask.id = this.noTask() ? 0 : _.last(this.state.tasks).id + 1
 
+    this.setState({ newTask })
+  }
+
+  onInputSeekWord (seekWord) {
     this.setState({
-      newTask: {
-        id,
-        name: '',
-        description: '',
-        createDate: date.getTime(),
-        editDate: date.getTime(),
-        done: false,
-        projects: []
-      }
+      seekWord: seekWord
     })
   }
 
-  onInputSeekWord (event) {
-    this.setState({
-      seekWord: event.currentTarget.value
-    })
-  }
-
-  onInputNewTaskName (event) {
+  onInputNewTaskName (taskName) {
     this.setState({
       newTask: Object.assign(this.state.newTask, {
-        name: event.target.value
+        name: taskName
       })
     })
   }
 
-  onInputNewTaskDescription (event) {
+  onInputNewTaskDescription (taskDescription) {
     this.setState({
       newTask: Object.assign(this.state.newTask, {
-        description: event.target.value
+        description: taskDescription
       })
     })
   }
 
-  hasContent () {
-    return this.state.newTask.name
+  isEditing () {
+    return this.state.newtask
+  }
+
+  canAddNewTask () {
+    return this.state.newTask && this.state.newTask.name
   }
 
   // sort
   newerTasks () {
-    return _.sortBy(this.props.tasks, task => -task.createDate)
+    return _.sortBy(this.state.tasks, task => -task.createDate)
   }
 
   olderTasks () {
-    return _.sortBy(this.props.tasks, 'createDate')
+    return _.sortBy(this.state.tasks, 'createDate')
   }
 
 
@@ -131,150 +138,64 @@ export default class Task extends React.Component {
     })
   }
 
-  onChangeSort (event) {
+  onChangeSort (sortName) {
     this.setState({
-      sort: event.currentTarget.value
+      sort: sortName
     })
   }
 
-  onChangeFilter (event) {
+  onChangeFilter (filterName) {
     this.setState({
-      filter: event.currentTarget.value
+      filter: filterName
     })
   }
 
   render () {
-    const task = this.filteredData().map((task, index) => {
-      const createDate = new Date(task.createDate)
-      const editDate = new Date(task.editDate)
-      const listClass = [
-        'list',
-        `list_${index}`,
-        `${(index + 1) % 2 === 0? 'even' : ''}`,
-        `${task.done ? 'is-done' : ''}`
-      ]
 
-      const deleteBtn = (
-        <a href='#delete-task' className='list--delete' onClick={(event) => this.props.onDeleteTask(task.id)} >
-          <i className="fa fa-times" aria-hidden="true"></i>
-        </a>
-      )
-
-      return (
-          <li className={listClass.filter(item => item).join(' ')} key={task.id}>
-            <div className='list--done-toggle' onClick={() => this.props.onDoneTask(task.id)}>
-              { task.done ? <i className='fa fa-check' aria-hidden='true'></i> : '' }
-            </div>
-            <div className='list--content'>
-              <div className='list--date'>
-                {`${createDate.getFullYear()}/${createDate.getMonth() + 1}/${createDate.getDate()} (${weekday[createDate.getDay()]})`}
-                {task.createDate !== task.editDate ? ` | ${editDate.getFullYear()}/${editDate.getMonth() + 1}/${editDate.getDate()} (${weekday[editDate.getDay()]})` : ''}
-              </div>
-              <h2 className='list--title'>
-                {task.name}
-              </h2>
-              <p className='list--description'>
-                {task.description}
-              </p>
-            </div>
-            { task.done ? deleteBtn : ''}
-        </li>
-      )
-    })
-
-    let newTaskDom = ''
-
-    if (this.state.newTask) {
-      newTaskDom = (
-        <div className='new-task'>
-          <div className='new-task--name'>
-            <input type='text'
-              className='new-task--input'
-              onInput = {(event) => this.onInputNewTaskName(event)}
-              value={this.state.newTask.name}
-              placeholder='Title'/>
-          </div>
-          <div className='new-task--description mt-10'>
-            <textarea className='new-task--textarea'
-              onInput = {(event) => this.onInputNewTaskDescription(event)}
-              value={this.state.newTask.description}
-              placeholder='leave a comment' />
-          </div>
-          <div className='new-task--action mt-10'>
-            <a href='#add-new-task'
-              className={`btn btn-add ${this.hasContent() ? 'is-available' : 'is-disabled'}`}
-              onClick={ (event) => this.addNewTask(event) }>
-              <i className='fa fa-plus mr-10' aria-hidden='true'></i>
-              submit new task
-            </a>
-            <a href='#cancel' className='btn btn-cancel ml-15' onClick={ (event) => this.cancelNewTask(event) }>
-              <i className='fa fa-ban mr-10' aria-hidden='true'></i>
-              cancel
-            </a>
-          </div>
-        </div>
-      )
-    } else {
-      newTaskDom = (
-        <a href='#add-new-task' className='btn btn-add' onClick={ (event) => this.insertNewTask(event) }>
-          <i className='fa fa-plus mr-10' aria-hidden='true'></i>
-          add new task
-        </a>
-      )
-    }
-
-    const sortOption = this.state.sortOption.map((item) => {
-      return (
-        <option value={ item } key={ item }>
-          { item }
-        </option>
-      )
-    })
-
-    const filterOption = this.state.filterOption.map((item) => {
-      return (
-        <option value={ item } key={ item }>
-          { item }
-        </option>
-      )
-    })
+    const taskForm = <TaskForm
+        newTask = {this.state.newTask}
+        onInputNewTaskName = {(taskName) => this.onInputNewTaskName(taskName)}
+        onInputNewTaskDescription = {(taskDescription) => this.onInputNewTaskDescription(taskDescription)}
+        projects = { this.props.projects }/>
 
     return (
       <div className='todo-tasks'>
         <div className='new-container'>
-          { newTaskDom }
-        </div>
-        <div className='list--action'>
-          <div className='list-seek list--action--item'>
-            <span className='form-tag'>
-              <i className="fa fa-sort" aria-hidden="true"></i>
-            </span>
-            <select className='list--action--select' name='sort' value={ this.state.sort } onChange={ (event) => this.onChangeSort(event) }>
-              { sortOption }
-            </select>
-          </div>
-          <div className='list-seek list--action--item'>
-            <span className='form-tag'>
-              <i className="fa fa-filter" aria-hidden="true"></i>
-            </span>
-            <select className='list--action--select' name='filter' value={ this.state.filter } onChange={ (event) => this.onChangeFilter(event) }>
-              { filterOption }
-            </select>
-          </div>
-          <div className='list-seek list--action--item'>
-            <span className='form-tag'>
-              <i className="fa fa-search" aria-hidden="true"></i>
-            </span>
-            <input className='list-seek--input' type='input' value={this.state.seekWord} onInput={(event) => this.onInputSeekWord(event)} />
+          { this.state.newTask ? taskForm : '' }
+          <div className='new-task--action'>
+            <a href='#add-new-task'
+              className={`btn btn-add is-available`}
+              onClick={ (event) => this.canAddNewTask() ? this.addNewTask(event) : this.createNewTask(event) }>
+              <i className='fa fa-plus mr-10' aria-hidden='true'></i>
+              {this.isEditing() ? 'submit new task' : 'add new task'}
+            </a>
+            {
+              this.isEditing() ?
+              <a href='#cancel' className='btn btn-cancel ml-15' onClick={ (event) => this.cancelNewTask(event) }>
+                <i className='fa fa-ban mr-10' aria-hidden='true'></i>
+                cancel
+              </a>
+              :
+              ''
+            }
           </div>
         </div>
+        <TaskAction
+          currentSort = { this.state.sort }
+          sortOption = { this.state.sortOption }
+          onChangeSort = { sortName => this.onChangeSort(sortName) }
+          currentFilter = { this.state.filter }
+          filterOption = { this.state.filterOption }
+          onChangeFilter = { filterName => this.onChangeFilter(filterName) }
+          seekWord = { this.state.seekWord }
+          onInputSeekWord = { seekWord => this.onInputSeekWord(seekWord) }/>
         <ReactCSSTransitionGroup
           component="ul"
           className='list-container'
           transitionName="list"
           transitionEnterTimeout={200}
           transitionLeaveTimeout={500}>
-          {task}
+          { this.filteredData().map((task, index) => <TaskList key = {task.id} task = {task} index = {index} deleteTask = {(taskId) => this.props.onDeleteTask(taskId)} onDoneTask = {() => this.onDoneTask()} />) }
         </ReactCSSTransitionGroup>
       </div>
     )

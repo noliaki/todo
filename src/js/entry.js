@@ -1,9 +1,12 @@
+/* globals window */
 import React from 'react'
 import ReactDOM from 'react-dom'
+import _ from 'lodash'
+
 import Project from './project'
 import Task from './task'
 
-import {projects, tasks} from './initial-state'
+import Store from './Store'
 
 const storageName = 'todo'
 
@@ -11,17 +14,15 @@ class TodoApp extends React.Component {
   constructor (props) {
     super (props)
     this.state = {
-      projects,
-      tasks,
+      projects: Store.getProjects(),
+      tasks: Store.getTasks(),
       searchText: ''
     }
   }
 
   componentDidMount () {
-    const tasks = JSON.parse(window.localStorage.getItem(storageName))
-    if (!tasks || !tasks.length) {
-      return
-    }
+    const tasks = _.compact(JSON.parse(window.localStorage.getItem(storageName)))
+    if (!tasks || !tasks.length) return
     this.setState({
       tasks
     })
@@ -32,7 +33,12 @@ class TodoApp extends React.Component {
   }
 
   addNewTask (newTask) {
-    const tasks = this.state.tasks.push(newTask)
+    this.state.tasks.push(newTask)
+    this.save()
+  }
+
+  addNewProject (newProject) {
+    this.state.project.push(newProject)
     this.save()
   }
 
@@ -53,6 +59,16 @@ class TodoApp extends React.Component {
     this.save()
   }
 
+  onDoneProject (id) {
+    const projects = this.state.projects
+    const targetProject = projects.find(project => project && project.id === id)
+    targetProject.done = !targetProject.done
+    this.setState({
+      projects
+    })
+    this.save()
+  }
+
   onDeleteTask (id) {
     this.setState({
       tasks: this.state.tasks.filter(task => task.id !== id)
@@ -60,19 +76,39 @@ class TodoApp extends React.Component {
     this.save()
   }
 
+  onDeleteProject (id) {
+    this.setState({
+      projects: this.state.projects.filter(project => project.id !== id)
+    })
+    this.save()
+  }
+
   render () {
     return (
-      <Task tasks = { this.state.tasks }
-        searchText = { this.state.searchText }
-        addNewTask = { (newTask) => this.addNewTask(newTask) }
-        onDoneTask = { (id) => this.onDoneTask(id) }
-        onDeleteTask = { (id) => this.onDeleteTask(id) }
-      />
+      <div id='todo'>
+        <div id='task'>
+          <Task
+            tasks = { this.state.tasks }
+            searchText = { this.state.searchText }
+            addNewTask = { (newTask) => this.addNewTask(newTask) }
+            onDoneTask = { (id) => this.onDoneTask(id) }
+            onDeleteTask = { (id) => this.onDeleteTask(id) }
+            projects = { this.state.projects } />
+        </div>
+        <div id='project'>
+          <Project
+            projects = { this.state.projects }
+            searchText = { this.state.searchText }
+            addNewProject = { (newTask) => this.addNewProject(newTask) }
+            onDoneProject = { (id) => this.onDoneProject(id) }
+            onDeleteProject = { (id) => this.onDeleteProject(id) } />
+        </div>
+      </div>
     )
   }
 }
 
 ReactDOM.render (
   <TodoApp />,
-  document.getElementById('todo')
+  window.document.getElementById('todo')
 )
